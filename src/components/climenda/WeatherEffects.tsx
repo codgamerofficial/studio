@@ -48,25 +48,29 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
         if (!isClient) return;
 
         const playAudio = (ref: React.RefObject<HTMLAudioElement>) => {
-            ref.current?.play().catch(error => {
-                // Autoplay is often blocked by browsers, user interaction is needed.
-                // We can ignore this error silently as it's a decorative feature.
-            });
+            if (ref.current) {
+                ref.current.loop = true;
+                ref.current.play().catch(error => {
+                    // Autoplay is often blocked by browsers. We can ignore this error
+                    // as it's a decorative feature. The user clicking anywhere will likely
+                    // enable audio playback.
+                });
+            }
         };
 
         const pauseAudio = (ref: React.RefObject<HTMLAudioElement>) => {
-            ref.current?.pause();
+            if (ref.current) {
+                ref.current.pause();
+            }
         };
 
-        if (isRaining && rainAudioRef.current) {
-            rainAudioRef.current.loop = true;
+        if (isRaining) {
             playAudio(rainAudioRef);
         } else {
             pauseAudio(rainAudioRef);
         }
 
-        if (isThundering && thunderAudioRef.current) {
-            thunderAudioRef.current.loop = true;
+        if (isThundering) {
             playAudio(thunderAudioRef);
         } else {
             pauseAudio(thunderAudioRef);
