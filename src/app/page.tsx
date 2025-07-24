@@ -1,13 +1,13 @@
 'use client'
 
-import React, { useState, useEffect, useTransition, useRef } from 'react'
+import React, { useState, useEffect, useTransition, useRef, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
-import { getMockWeatherData, WeatherData, getAvailableLocations } from '@/lib/weather'
+import { getWeatherData, WeatherData, getAvailableLocations, LocationSuggestion } from '@/lib/weather'
 import { CurrentWeather } from '@/components/climenda/CurrentWeather'
 import { HourlyForecast } from '@/components/climenda/HourlyForecast'
 import { CalendarView } from '@/components/climenda/CalendarView'
@@ -17,6 +17,7 @@ import { UnitSwitcher, Units } from '@/components/climenda/UnitSwitcher'
 import { CloudSun, Search } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 
 
 const formSchema = z.object({
@@ -26,43 +27,54 @@ const formSchema = z.object({
 })
 
 export default function Home() {
-  const [location, setLocation] = useState('New York, USA')
+  const [location, setLocation] = useState('New York')
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null)
   const [units, setUnits] = useState<Units>({ temp: 'C', speed: 'kmh' })
   const [isPending, startTransition] = useTransition()
+  const [isFetchingWeather, setIsFetchingWeather] = useState(true);
   const { toast } = useToast();
 
-  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
-  const availableLocations = getAvailableLocations()
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      location: "New York, USA",
+      location: "New York",
     },
   })
 
-  useEffect(() => {
-    startTransition(() => {
-      const data = getMockWeatherData(location);
-      if(data) {
+  const fetchWeatherData = useCallback((loc: string) => {
+    setIsFetchingWeather(true);
+    startTransition(async () => {
+      const data = await getWeatherData(loc);
+      if (data) {
         setWeatherData(data);
+        setLocation(data.location);
+        form.setValue('location', data.location);
       } else {
-        const defaultData = getMockWeatherData('new york');
-        setWeatherData(defaultData);
-        setLocation('New York, USA')
-        form.setValue('location', 'New York, USA')
         toast({
           variant: "destructive",
           title: "Location not found",
-          description: `Showing weather for New York instead.`,
-        })
+          description: `Could not fetch weather for ${loc}. Please try another location.`,
+        });
+        if (!weatherData) { // if there's no previous data, fetch for a default
+            const defaultData = await getWeatherData('New York');
+            setWeatherData(defaultData);
+            setLocation('New York');
+            form.setValue('location', 'New York');
+        }
       }
+      setIsFetchingWeather(false);
     });
-  }, [location, toast, form])
+  }, [toast, form, weatherData]);
+
+  useEffect(() => {
+    fetchWeatherData(location);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -76,12 +88,10 @@ export default function Home() {
     };
   }, []);
 
-  const handleLocationInputChange = (value: string) => {
+  const handleLocationInputChange = async (value: string) => {
     form.setValue('location', value);
-    if (value.length > 0) {
-        const filtered = availableLocations.filter(loc =>
-            loc.toLowerCase().includes(value.toLowerCase())
-        );
+    if (value.length > 2) {
+        const filtered = await getAvailableLocations(value);
         setSuggestions(filtered);
         setShowSuggestions(true);
     } else {
@@ -90,15 +100,16 @@ export default function Home() {
     }
   }
 
-  const handleSuggestionClick = (suggestion: string) => {
-    form.setValue('location', suggestion)
-    setShowSuggestions(false)
-    onSubmit({ location: suggestion })
+  const handleSuggestionClick = (suggestion: LocationSuggestion) => {
+    const suggestionString = `${suggestion.name}, ${suggestion.country}`;
+    form.setValue('location', suggestionString);
+    setShowSuggestions(false);
+    onSubmit({ location: suggestionString });
   }
   
   function onSubmit(values: z.infer<typeof formSchema>) {
-    setLocation(values.location);
     setShowSuggestions(false);
+    fetchWeatherData(values.location);
   }
 
   return (
@@ -142,13 +153,13 @@ export default function Home() {
               {showSuggestions && suggestions.length > 0 && (
                 <Card className="absolute top-full mt-2 w-full z-10 max-h-60 overflow-y-auto">
                     <CardContent className="p-2">
-                        {suggestions.map((suggestion, index) => (
+                        {suggestions.map((suggestion) => (
                             <div 
-                                key={index}
+                                key={suggestion.id}
                                 onClick={() => handleSuggestionClick(suggestion)}
                                 className="p-2 hover:bg-accent rounded-md cursor-pointer text-sm"
                             >
-                                {suggestion}
+                                {suggestion.name}, {suggestion.country}
                             </div>
                         ))}
                     </CardContent>
@@ -161,17 +172,39 @@ export default function Home() {
       </header>
 
       <main className="container flex-1 py-8">
-        <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 transition-opacity duration-300 ${isPending ? 'opacity-50' : 'opacity-100'}`}>
-          <div className="lg:col-span-2 space-y-8">
-            <CurrentWeather weatherData={weatherData} units={units} />
-            <HourlyForecast weatherData={weatherData} units={units} />
-          </div>
-          <div className="space-y-8">
-            <CalendarView />
-            <HolidayDisplay weatherData={weatherData} />
-            <EventSuggestions weather={weatherData?.current ?? null} location={weatherData?.location ?? null} />
-          </div>
-        </div>
+        {(isPending || isFetchingWeather) ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-8">
+                    <Card>
+                        <CardContent className="p-6">
+                            <Skeleton className="h-32 w-full" />
+                        </CardContent>
+                    </Card>
+                     <Card>
+                        <CardContent className="p-6">
+                            <Skeleton className="h-64 w-full" />
+                        </CardContent>
+                    </Card>
+                </div>
+                <div className="space-y-8">
+                    <Card><CardContent className="p-6"><Skeleton className="h-72 w-full" /></CardContent></Card>
+                    <Card><CardContent className="p-6"><Skeleton className="h-24 w-full" /></CardContent></Card>
+                    <Card><CardContent className="p-6"><Skeleton className="h-24 w-full" /></CardContent></Card>
+                </div>
+            </div>
+        ) : (
+            <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 transition-opacity duration-300 ${isPending ? 'opacity-50' : 'opacity-100'}`}>
+                <div className="lg:col-span-2 space-y-8">
+                    <CurrentWeather weatherData={weatherData} units={units} />
+                    <HourlyForecast weatherData={weatherData} units={units} />
+                </div>
+                <div className="space-y-8">
+                    <CalendarView />
+                    <HolidayDisplay weatherData={weatherData} />
+                    <EventSuggestions weather={weatherData?.current ?? null} location={weatherData?.location ?? null} />
+                </div>
+            </div>
+        )}
       </main>
       
       <footer className="py-6 md:px-8 md:py-0 border-t">
