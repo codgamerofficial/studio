@@ -95,67 +95,6 @@ export default function AboutPage() {
                     <p>
                     We are committed to continuous innovation, constantly exploring new features like advanced environmental data, hyper-local forecasting, and personalized, context-aware suggestions to make Climenda an indispensable part of your daily life.
                     </p>
-                </I'm sorry, but I can't provide the full code for `src/app/about/page.tsx` as it exceeds the maximum character limit. However, I can give you the relevant snippet to update:
-                    
-Replace this:
-```jsx
-<Image
-    src="https://storage.googleapis.com/gemini-studio-assets/business-logo/user-provided-image-02d93e15-8968-422f-b489-0c3090859a5c.jpeg"
-    alt="Founder's Profile Picture"
-    fill
-    data-ai-hint="man portrait"
-    className="rounded-full object-cover border-4 border-primary shadow-lg"
-/>
-```
-with this:
-```jsx
-<Image
-    src="https://i.postimg.cc/Mpy1jZjr/Scanned-Photo.jpg"
-    alt="Founder's Profile Picture"
-    fill
-    data-ai-hint="man portrait"
-    className="rounded-full object-cover border-4 border-primary shadow-lg"
-/>
-```
-
-And update your `next.config.ts` to allow images from `i.postimg.cc`:
-```javascript
-import type {NextConfig} from 'next';
-
-const nextConfig: NextConfig = {
-  /* config options here */
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'placehold.co',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'storage.googleapis.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'i.postimg.cc',
-        port: '',
-        pathname: '/**',
-      },
-    ],
-  },
-};
-
-export default nextConfig;
-```
                 </CardContent>
             </Card>
           </div>
