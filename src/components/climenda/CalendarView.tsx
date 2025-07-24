@@ -13,10 +13,15 @@ interface CalendarViewProps {
 export function CalendarView({ initialDate }: CalendarViewProps) {
   const [date, setDate] = useState<Date | undefined>(initialDate);
   const [currentMonth, setCurrentMonth] = useState(initialDate);
+  const [today, setToday] = useState(initialDate);
 
   useEffect(() => {
-    setDate(initialDate);
-    setCurrentMonth(initialDate);
+    const locationToday = new Date(initialDate);
+    locationToday.setHours(0, 0, 0, 0);
+    
+    setDate(locationToday);
+    setCurrentMonth(locationToday);
+    setToday(locationToday);
   }, [initialDate]);
 
   const handlePrevMonth = () => {
@@ -28,8 +33,8 @@ export function CalendarView({ initialDate }: CalendarViewProps) {
   };
 
   const handleTodayClick = () => {
-    setDate(initialDate);
-    setCurrentMonth(initialDate);
+    setDate(today);
+    setCurrentMonth(today);
   }
 
   return (
@@ -59,6 +64,7 @@ export function CalendarView({ initialDate }: CalendarViewProps) {
           onMonthChange={setCurrentMonth}
           className="rounded-md"
           showOutsideDays={true}
+          today={today}
           classNames={{
             day_today: "bg-accent/50 text-accent-foreground rounded-md",
           }}
