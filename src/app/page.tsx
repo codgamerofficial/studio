@@ -210,12 +210,12 @@ export default function Home() {
             </div>
         ) : weatherData ? (
             <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 transition-opacity duration-500 ${isPending ? 'opacity-30' : 'opacity-100'}`}>
-                <div className="lg:col-span-2 space-y-8 animate-in fade-in-0 slide-in-from-bottom-10 duration-500">
+                <div className="lg:col-span-2 space-y-8 animate-fade-in-up">
                     <CurrentWeather weatherData={weatherData} units={units} />
                     <DailyForecast weatherData={weatherData} units={units} />
                     <HourlyForecast weatherData={weatherData} units={units} />
                 </div>
-                <div className="space-y-8 animate-in fade-in-0 slide-in-from-bottom-10 duration-500 delay-200">
+                <div className="space-y-8 animate-fade-in-up" style={{animationDelay: '200ms'}}>
                     <Clock location={weatherData?.location} />
                     <TimeTools />
                     <CalendarView initialDate={weatherData?.location.localtime ? new Date(weatherData.location.localtime) : new Date()} />
