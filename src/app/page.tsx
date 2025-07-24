@@ -31,7 +31,7 @@ const formSchema = z.object({
 })
 
 export default function Home() {
-  const [location, setLocation] = useState('New York')
+  const [location, setLocation] = useState('Manila')
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null)
   const [units, setUnits] = useState<Units>({ temp: 'C', speed: 'kmh' })
   const [isPending, startTransition] = useTransition()
@@ -46,7 +46,7 @@ export default function Home() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      location: "New York",
+      location: "Manila",
     },
   })
 
@@ -66,7 +66,7 @@ export default function Home() {
             description: `Could not fetch weather for ${loc}. Please try another location.`,
           });
           if (!weatherData) { // if there's no previous data, fetch for a default
-              const defaultData = await getWeatherData('New York');
+              const defaultData = await getWeatherData('Manila');
               if (defaultData) {
                 setWeatherData(defaultData);
                 setLocation(defaultData.location);
