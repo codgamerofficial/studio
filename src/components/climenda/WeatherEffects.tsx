@@ -45,15 +45,10 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const isRaining = lowerCaseCondition.includes('rain') || lowerCaseCondition.includes('drizzle') || isThundering;
 
     useEffect(() => {
-        if (!isClient) return;
-
         const playAudio = (ref: React.RefObject<HTMLAudioElement>) => {
             if (ref.current) {
-                ref.current.loop = true;
                 ref.current.play().catch(error => {
-                    // Autoplay is often blocked by browsers. We can ignore this error
-                    // as it's a decorative feature. The user clicking anywhere will likely
-                    // enable audio playback.
+                    // Autoplay was prevented.
                 });
             }
         };
@@ -61,6 +56,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
         const pauseAudio = (ref: React.RefObject<HTMLAudioElement>) => {
             if (ref.current) {
                 ref.current.pause();
+                ref.current.currentTime = 0; 
             }
         };
 
@@ -85,8 +81,8 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
             {isRaining && <Rain />}
             {isThundering && <Thunderstorm />}
             
-            <audio ref={rainAudioRef} src="https://cdn.pixabay.com/download/audio/2022/08/17/audio_342d7a221f.mp3" preload="auto"></audio>
-            <audio ref={thunderAudioRef} src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_e56f4e3ece.mp3" preload="auto"></audio>
+            <audio ref={rainAudioRef} src="https://cdn.pixabay.com/download/audio/2022/08/17/audio_342d7a221f.mp3" loop muted={false} preload="auto"></audio>
+            <audio ref={thunderAudioRef} src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_e56f4e3ece.mp3" loop muted={false} preload="auto"></audio>
 
             <style jsx global>{`
                 @keyframes fall {
