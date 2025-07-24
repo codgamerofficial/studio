@@ -126,13 +126,78 @@ const mockData: Record<string, WeatherData> = {
           { date: "2024-10-07", name: "Labour Day" },
           { date: "2024-12-25", name: "Christmas Day" },
       ],
-  }
+  },
+  "mumbai": {
+    location: "Mumbai, India",
+    current: {
+        temp_c: 31,
+        temp_f: 88,
+        humidity: 80,
+        wind_kph: 18,
+        wind_mph: 11,
+        condition: "Thunderstorm",
+    },
+    hourly: generateHourlyForecast(31, "Thunderstorm"),
+    holidays: [
+        { date: "2024-08-15", name: "Independence Day" },
+        { date: "2024-10-02", name: "Gandhi Jayanti" },
+    ],
+  },
+  "cairo": {
+    location: "Cairo, Egypt",
+    current: {
+        temp_c: 35,
+        temp_f: 95,
+        humidity: 40,
+        wind_kph: 15,
+        wind_mph: 9,
+        condition: "Clear",
+    },
+    hourly: generateHourlyForecast(35, "Clear"),
+    holidays: [
+        { date: "2024-07-23", name: "Revolution Day" },
+        { date: "2024-10-06", name: "Armed Forces Day" },
+    ],
+  },
+  "rio de janeiro": {
+    location: "Rio de Janeiro, Brazil",
+    current: {
+        temp_c: 26,
+        temp_f: 79,
+        humidity: 70,
+        wind_kph: 13,
+        wind_mph: 8,
+        condition: "Partly Cloudy",
+    },
+    hourly: generateHourlyForecast(26, "Partly Cloudy"),
+    holidays: [
+        { date: "2024-09-07", name: "Independence Day" },
+        { date: "2024-11-15", name: "Republic Day" },
+    ],
+  },
 };
 
 export const getMockWeatherData = (location: string): WeatherData | null => {
-  const key = location.toLowerCase();
-  const foundKey = Object.keys(mockData).find(k => mockData[k].location.toLowerCase() === key);
-  return mockData[foundKey || key] || null;
+  const lowerLocation = location.toLowerCase();
+  
+  // First, check for an exact match on the location name (e.g., "New York, USA")
+  const foundByLocation = Object.values(mockData).find(data => data.location.toLowerCase() === lowerLocation);
+  if (foundByLocation) {
+    return foundByLocation;
+  }
+
+  // If no exact match, check if the key is present (e.g., "new york")
+  if (mockData[lowerLocation]) {
+    return mockData[lowerLocation];
+  }
+
+  // Fallback for partial matches, e.g. user types "new york" and suggestion is "New York, USA"
+  const key = Object.keys(mockData).find(k => location.toLowerCase().includes(k))
+  if (key && mockData[key]) {
+      return mockData[key];
+  }
+
+  return null;
 };
 
 export const getAvailableLocations = (): string[] => {

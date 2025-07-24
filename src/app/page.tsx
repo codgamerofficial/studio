@@ -26,7 +26,7 @@ const formSchema = z.object({
 })
 
 export default function Home() {
-  const [location, setLocation] = useState('New York')
+  const [location, setLocation] = useState('New York, USA')
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null)
   const [units, setUnits] = useState<Units>({ temp: 'C', speed: 'kmh' })
   const [isPending, startTransition] = useTransition()
@@ -41,7 +41,7 @@ export default function Home() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      location: "New York",
+      location: "New York, USA",
     },
   })
 
@@ -53,6 +53,8 @@ export default function Home() {
       } else {
         const defaultData = getMockWeatherData('new york');
         setWeatherData(defaultData);
+        setLocation('New York, USA')
+        form.setValue('location', 'New York, USA')
         toast({
           variant: "destructive",
           title: "Location not found",
@@ -60,7 +62,7 @@ export default function Home() {
         })
       }
     });
-  }, [location, toast])
+  }, [location, toast, form])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -123,6 +125,7 @@ export default function Home() {
                               {...field} 
                               onChange={(e) => handleLocationInputChange(e.target.value)}
                               onFocus={() => handleLocationInputChange(field.value)}
+                              autoComplete="off"
                               className="w-40 sm:w-64 pr-10" 
                             />
                             <Button type="submit" size="icon" variant="ghost" className="absolute right-0 top-0 h-full">
