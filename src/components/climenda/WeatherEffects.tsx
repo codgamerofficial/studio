@@ -102,7 +102,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const showEffects = isRaining || isThundering;
 
     return (
-        <div key={key} className="fixed top-0 left-0 w-full h-full pointer-events-none z-[9999]">
+        <div key={key} className="fixed top-0 left-0 w-full h-1/2 pointer-events-none z-[9999]">
             {isRaining && <Rain />}
             {isThundering && <Thunderstorm />}
             
@@ -129,7 +129,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
             <style jsx global>{`
                 @keyframes fall {
                     to {
-                        transform: translateY(100vh);
+                        transform: translateY(50vh);
                     }
                 }
                 .rain-container {
@@ -158,7 +158,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                     top: 0;
                     left: 0;
                     width: 100vw;
-                    height: 100vh;
+                    height: 50vh;
                     background: #a4a9b5;
                     opacity: 0;
                     animation: flash 4s infinite;
