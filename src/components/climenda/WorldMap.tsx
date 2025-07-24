@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Globe } from 'lucide-react';
 
 const geoUrl =
-  'https://raw.githubusercontent.com/deldersveld/topojson/master/world-110m.json';
+  'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 
 interface WorldMapProps {
   coordinates: [number, number];
@@ -48,8 +48,8 @@ export function WorldMap({ coordinates }: WorldMapProps) {
                     strokeWidth={0.2}
                     style={{
                       default: { outline: 'none' },
-                      hover: { outline: 'none' },
-                      pressed: { outline: 'none' },
+                      hover: { fill: 'hsl(var(--accent))', outline: 'none' },
+                      pressed: { fill: 'hsl(var(--primary))', outline: 'none' },
                     }}
                   />
                 ))
