@@ -29,7 +29,7 @@ export default function AboutPage() {
               <CardContent className="p-6 flex flex-col items-center text-center">
                 <div className="relative w-48 h-48 mb-4">
                   <Image
-                    src="https://placehold.co/400x400.png"
+                    src="https://storage.googleapis.com/gemini-studio-assets/business-logo/user-provided-image-a3357a6c-4809-4785-885f-73b334693b4a.jpeg"
                     alt="Founder's Profile Picture"
                     width={192}
                     height={192}
@@ -37,7 +37,7 @@ export default function AboutPage() {
                     className="rounded-full object-cover border-4 border-primary shadow-lg"
                   />
                 </div>
-                <h2 className="text-2xl font-bold text-primary">Abhishek Kumar</h2>
+                <h2 className="text-2xl font-bold text-primary">Saswata Dey</h2>
                 <p className="text-muted-foreground">Founder & Lead Developer</p>
               </CardContent>
             </Card>
@@ -51,19 +51,19 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button asChild variant="outline" className="w-full justify-start">
-                  <a href="mailto:abhishek.kumar@example.com">
+                  <a href="mailto:saswata.dey@example.com">
                     <Mail className="mr-2 h-4 w-4" />
                     Email
                   </a>
                 </Button>
                  <Button asChild variant="outline" className="w-full justify-start">
-                  <a href="https://linkedin.com/in/abhishek-kumar" target="_blank" rel="noopener noreferrer">
+                  <a href="https://linkedin.com/in/saswata-dey" target="_blank" rel="noopener noreferrer">
                     <Linkedin className="mr-2 h-4 w-4" />
                     LinkedIn
                   </a>
                 </Button>
                  <Button asChild variant="outline" className="w-full justify-start">
-                  <a href="https://twitter.com/abhishek" target="_blank" rel="noopener noreferrer">
+                  <a href="https://twitter.com/saswata" target="_blank" rel="noopener noreferrer">
                     <Twitter className="mr-2 h-4 w-4" />
                     Twitter / X
                   </a>
