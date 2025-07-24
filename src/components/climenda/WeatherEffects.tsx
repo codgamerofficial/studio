@@ -23,6 +23,17 @@ const Thunderstorm = React.memo(() => {
 });
 Thunderstorm.displayName = 'Thunderstorm';
 
+const Clouds = React.memo(() => {
+    return (
+        <div className="clouds-container">
+            <div className="cloud cloud1"></div>
+            <div className="cloud cloud2"></div>
+            <div className="cloud cloud3"></div>
+        </div>
+    );
+});
+Clouds.displayName = 'Clouds';
+
 
 interface WeatherEffectsProps {
     condition: string;
@@ -46,6 +57,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const lowerCaseCondition = condition.toLowerCase();
     const isThundering = lowerCaseCondition.includes('thunder') || lowerCaseCondition.includes('storm');
     const isRaining = lowerCaseCondition.includes('rain') || lowerCaseCondition.includes('drizzle') || isThundering;
+    const isCloudy = isRaining || isThundering || lowerCaseCondition.includes('cloud') || lowerCaseCondition.includes('overcast') || lowerCaseCondition.includes('mist');
 
     const playAudio = (ref: React.RefObject<HTMLAudioElement>) => {
         if (ref.current) {
@@ -99,10 +111,11 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
 
     if (!isClient) return null;
 
-    const showEffects = isRaining || isThundering;
+    const showEffects = isRaining || isThundering || isCloudy;
 
     return (
-        <div key={key} className="fixed top-0 left-0 w-full h-1/2 pointer-events-none z-[9999]">
+        <div key={key} className="fixed top-0 left-0 w-full h-1/2 pointer-events-none z-[9999] overflow-hidden">
+            {isCloudy && <Clouds />}
             {isRaining && <Rain />}
             {isThundering && <Thunderstorm />}
             
@@ -138,7 +151,6 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                     left: 0;
                     width: 100%;
                     height: 100%;
-                    overflow: hidden;
                 }
                 .raindrop {
                     position: absolute;
@@ -169,6 +181,95 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                     opacity: 0;
                     animation: professional-flash 5s linear infinite;
                 }
+
+                .clouds-container {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                }
+
+                .cloud {
+                    position: absolute;
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 50%;
+                    filter: blur(10px);
+                    opacity: 0.8;
+                }
+
+                .cloud::before, .cloud::after {
+                    content: '';
+                    position: absolute;
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 50%;
+                    filter: blur(5px);
+                }
+
+                .cloud1 {
+                    width: 200px;
+                    height: 60px;
+                    top: 10%;
+                    animation: drift 25s linear infinite reverse;
+                }
+
+                .cloud1::before {
+                    width: 120px;
+                    height: 80px;
+                    top: -40px;
+                    left: 40px;
+                }
+                 .cloud1::after {
+                    width: 100px;
+                    height: 60px;
+                    top: -30px;
+                    right: 30px;
+                }
+                
+                .cloud2 {
+                    width: 300px;
+                    height: 100px;
+                    top: 20%;
+                    animation: drift 35s linear infinite;
+                }
+
+                .cloud2::before {
+                    width: 180px;
+                    height: 120px;
+                    top: -60px;
+                    left: 60px;
+                }
+
+                .cloud2::after {
+                    width: 150px;
+                    height: 90px;
+                    top: -45px;
+                    right: 45px;
+                }
+
+                .cloud3 {
+                    width: 250px;
+                    height: 80px;
+                    top: 5%;
+                    animation: drift 45s linear infinite reverse;
+                }
+                
+                .cloud3::before {
+                    width: 150px;
+                    height: 100px;
+                    top: -50px;
+                    left: 50px;
+                }
+
+                @keyframes drift {
+                    from {
+                        transform: translateX(-150%);
+                    }
+                    to {
+                        transform: translateX(150%);
+                    }
+                }
+
             `}</style>
         </div>
     );
