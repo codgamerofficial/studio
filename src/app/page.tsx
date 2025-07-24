@@ -203,7 +203,7 @@ export default function Home() {
                     <Skeleton className="h-72 w-full rounded-2xl" />
                 </div>
                 <div className="space-y-8">
-                    <Skeleton className="h-80 w-full rounded-2xl" />
+                    <Skeleton className="h-[22rem] w-full rounded-2xl" />
                     <Skeleton className="h-32 w-full rounded-2xl" />
                     <Skeleton className="h-32 w-full rounded-2xl" />
                 </div>
@@ -216,7 +216,7 @@ export default function Home() {
                     <HourlyForecast weatherData={weatherData} units={units} />
                 </div>
                 <div className="space-y-8 animate-in fade-in-0 slide-in-from-bottom-10 duration-500 delay-200">
-                    <Clock />
+                    <Clock location={weatherData?.location} />
                     <TimeTools />
                     <CalendarView initialDate={weatherData?.location.localtime ? new Date(weatherData.location.localtime) : new Date()} />
                     <HolidayDisplay weatherData={weatherData} />

@@ -3,8 +3,13 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from '@/lib/utils';
+import { LocationInfo } from '@/lib/weather';
 
-export function Clock() {
+interface ClockProps {
+  location: LocationInfo | null;
+}
+
+export function Clock({ location }: ClockProps) {
   const [time, setTime] = useState({
     hours: 0,
     minutes: 0,
@@ -13,19 +18,37 @@ export function Clock() {
 
   useEffect(() => {
     const updateClock = () => {
-      const now = new Date();
-      setTime({
-        hours: now.getHours(),
-        minutes: now.getMinutes(),
-        seconds: now.getSeconds()
-      });
+      const options: Intl.DateTimeFormatOptions = {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      };
+
+      if (location?.tz_id) {
+        options.timeZone = location.tz_id;
+      }
+      
+      const formatter = new Intl.DateTimeFormat([], options);
+      const now = location?.localtime ? new Date(location.localtime) : new Date();
+      const parts = formatter.formatToParts(now);
+      
+      let hours = 0, minutes = 0, seconds = 0;
+      
+      for(const part of parts) {
+        if(part.type === 'hour') hours = parseInt(part.value);
+        if(part.type === 'minute') minutes = parseInt(part.value);
+        if(part.type === 'second') seconds = parseInt(part.value);
+      }
+      
+      setTime({ hours, minutes, seconds });
     };
     
-    updateClock(); // Set initial time
+    updateClock();
     const timerId = setInterval(updateClock, 1000);
     
     return () => clearInterval(timerId);
-  }, []);
+  }, [location]);
 
   const hoursDegrees = (time.hours % 12 + time.minutes / 60) * 30;
   const minutesDegrees = (time.minutes + time.seconds / 60) * 6;
@@ -74,10 +97,15 @@ export function Clock() {
             style={{ transform: `translateX(-50%) rotate(${secondsDegrees}deg)` }}
           />
         </div>
-        <div className="font-mono text-2xl text-foreground tracking-widest">
-            <span>{formatTime(time.hours)}</span>:
-            <span>{formatTime(time.minutes)}</span>:
-            <span className="text-primary">{formatTime(time.seconds)}</span>
+        <div className="text-center">
+            <div className="font-mono text-2xl text-foreground tracking-widest">
+                <span>{formatTime(time.hours)}</span>:
+                <span>{formatTime(time.minutes)}</span>:
+                <span className="text-primary">{formatTime(time.seconds)}</span>
+            </div>
+            {location?.tz_id && (
+                <div className="text-xs text-muted-foreground mt-1">{location.tz_id}</div>
+            )}
         </div>
       </CardContent>
     </Card>
