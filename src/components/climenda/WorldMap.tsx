@@ -30,8 +30,8 @@ export function WorldMap({ coordinates }: WorldMapProps) {
         <ComposableMap
           projection="geoMercator"
           projectionConfig={{
-            scale: 80,
-            center: [0, 20],
+            scale: 400, // Increased scale for better zoom
+            center: coordinates, // Center map on the selected location
           }}
           style={{ width: '100%', height: '100%' }}
         >
