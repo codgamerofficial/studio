@@ -1,33 +1,26 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
+import React, { useEffect, useState, useMemo } from 'react';
 
-const Rain = () => {
-    const [raindrops, setRaindrops] = useState<JSX.Element[]>([]);
-  
-    useEffect(() => {
-      const createRaindrops = () => {
-        const drops = Array.from({ length: 100 }).map((_, i) => {
-          const style = {
-            left: `${Math.random() * 100}%`,
-            animationDuration: `${0.5 + Math.random() * 0.5}s`,
-            animationDelay: `${Math.random() * 5}s`,
-          };
-          return <div key={i} className="raindrop" style={style} />;
-        });
-        setRaindrops(drops);
-      };
-  
-      createRaindrops();
-    }, []);
+const Rain = React.memo(() => {
+    const raindrops = useMemo(() => Array.from({ length: 100 }).map((_, i) => {
+        const style = {
+          left: `${Math.random() * 100}%`,
+          animationDuration: `${0.5 + Math.random() * 0.5}s`,
+          animationDelay: `${Math.random() * 5}s`,
+        };
+        return <div key={i} className="raindrop" style={style} />;
+    }), []);
   
     return <div className="rain-container">{raindrops}</div>;
-};
+});
+Rain.displayName = 'Rain';
 
-const Thunderstorm = () => {
+const Thunderstorm = React.memo(() => {
     return <div className="lightning-flash" />;
-};
+});
+Thunderstorm.displayName = 'Thunderstorm';
+
 
 interface WeatherEffectsProps {
     condition: string;
@@ -35,10 +28,15 @@ interface WeatherEffectsProps {
 
 export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const [isClient, setIsClient] = useState(false);
-    
+    const [key, setKey] = useState(0);
+
     useEffect(() => {
         setIsClient(true);
     }, []);
+
+    useEffect(() => {
+        setKey(prevKey => prevKey + 1);
+    }, [condition]);
     
     if (!isClient) return null;
     
@@ -47,7 +45,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const isThundering = lowerCaseCondition.includes('thunder') || lowerCaseCondition.includes('storm');
 
     return (
-        <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-[9999]">
+        <div key={key} className="fixed top-0 left-0 w-full h-full pointer-events-none z-[9999]">
             {isRaining && <Rain />}
             {isThundering && <Thunderstorm />}
             <style jsx global>{`
