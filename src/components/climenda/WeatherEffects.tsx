@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Volume2, VolumeX } from 'lucide-react';
 
@@ -45,6 +45,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const [isMuted, setIsMuted] = useState(true);
     const rainAudioRef = useRef<HTMLAudioElement>(null);
     const thunderAudioRef = useRef<HTMLAudioElement>(null);
+    const thunderTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         setIsClient(true);
@@ -59,21 +60,35 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const isRaining = lowerCaseCondition.includes('rain') || lowerCaseCondition.includes('drizzle') || isThundering;
     const isCloudy = isRaining || isThundering || lowerCaseCondition.includes('cloud') || lowerCaseCondition.includes('overcast') || lowerCaseCondition.includes('mist');
 
-    const playAudio = (ref: React.RefObject<HTMLAudioElement>) => {
+    const playAudio = useCallback((ref: React.RefObject<HTMLAudioElement>) => {
         if (ref.current) {
             ref.current.play().catch(error => {
-                // Autoplay was prevented. User needs to interact with the page first.
                 console.warn("Audio autoplay was prevented. Please interact with the page to enable sound.");
             });
         }
-    };
+    }, []);
     
-    const pauseAudio = (ref: React.RefObject<HTMLAudioElement>) => {
+    const pauseAudio = useCallback((ref: React.RefObject<HTMLAudioElement>) => {
         if (ref.current) {
             ref.current.pause();
             ref.current.currentTime = 0;
         }
-    };
+    }, []);
+
+    const scheduleThunder = useCallback(() => {
+        if (thunderTimeoutRef.current) {
+            clearTimeout(thunderTimeoutRef.current);
+        }
+        const play = () => {
+            if (thunderAudioRef.current) {
+                playAudio(thunderAudioRef);
+            }
+            const delay = 5000 + Math.random() * 10000; // Random delay between 5 and 15 seconds
+            thunderTimeoutRef.current = setTimeout(play, delay);
+        };
+        play();
+    }, [playAudio]);
+
 
     useEffect(() => {
         if (!isClient) return;
@@ -85,21 +100,28 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
         }
 
         if (isThundering) {
-            playAudio(thunderAudioRef);
+            scheduleThunder();
         } else {
+            if (thunderTimeoutRef.current) clearTimeout(thunderTimeoutRef.current);
             pauseAudio(thunderAudioRef);
         }
 
-    }, [isRaining, isThundering, isClient]);
+        return () => {
+            if (thunderTimeoutRef.current) clearTimeout(thunderTimeoutRef.current);
+        }
+
+    }, [isRaining, isThundering, isClient, playAudio, pauseAudio, scheduleThunder]);
 
     const handleUnmute = () => {
         setIsMuted(false);
         if (rainAudioRef.current) rainAudioRef.current.muted = false;
         if (thunderAudioRef.current) thunderAudioRef.current.muted = false;
 
-        // Re-trigger play in case it was blocked
         if (isRaining) playAudio(rainAudioRef);
-        if (isThundering) playAudio(thunderAudioRef);
+        if (isThundering) {
+            // Restart the scheduled thunder to play immediately on unmute
+            scheduleThunder();
+        }
     }
     
     const handleMute = () => {
@@ -120,7 +142,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
             {isThundering && <Thunderstorm />}
             
             <audio ref={rainAudioRef} src="https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg" loop muted preload="auto"></audio>
-            <audio ref={thunderAudioRef} src="https://actions.google.com/sounds/v1/weather/thunder_crack.ogg" loop muted preload="auto"></audio>
+            <audio ref={thunderAudioRef} src="https://actions.google.com/sounds/v1/weather/thunder_crack.ogg" muted preload="auto"></audio>
 
             {showEffects && (
                 <div className="fixed bottom-5 right-5 pointer-events-auto">
