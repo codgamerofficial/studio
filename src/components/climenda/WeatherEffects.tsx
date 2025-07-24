@@ -149,9 +149,15 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                     animation: fall linear infinite;
                 }
 
-                @keyframes flash {
-                    0%, 100% { opacity: 0; }
-                    50% { opacity: 0.3; }
+                @keyframes professional-flash {
+                    0% { opacity: 0; }
+                    90% { opacity: 0; }
+                    91% { opacity: 0.1; }
+                    92% { opacity: 0.6; }
+                    93% { opacity: 0.2; }
+                    94% { opacity: 0.8; }
+                    95% { opacity: 0; }
+                    100% { opacity: 0; }
                 }
                 .lightning-flash {
                     position: absolute;
@@ -159,10 +165,9 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                     left: 0;
                     width: 100vw;
                     height: 50vh;
-                    background: #a4a9b5;
+                    background: radial-gradient(ellipse at center, #d0d5e0 0%,#a4a9b5 40%,#7a808f 100%);
                     opacity: 0;
-                    animation: flash 4s infinite;
-                    animation-delay: 2s;
+                    animation: professional-flash 5s linear infinite;
                 }
             `}</style>
         </div>
