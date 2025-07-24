@@ -43,13 +43,7 @@ const suggestEventsPrompt = ai.definePrompt({
   Weather Description: {{weatherDescription}}
   Temperature: {{temperature}}°C
 
-  Suggest activities that are appropriate for the given weather conditions. Provide a few options.
-  Keep it short and to the point.
-
-  Output the suggestions in the following JSON format:
-  {
-    "suggestions": ["Suggestion 1", "Suggestion 2", "Suggestion 3"]
-  }`,
+  Suggest a few activities that are appropriate for the given weather conditions. Keep it short and to the point.`,
 });
 
 const suggestEventsFlow = ai.defineFlow(
