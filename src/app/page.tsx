@@ -15,6 +15,7 @@ import { EventSuggestions } from '@/components/climenda/EventSuggestions'
 import { UnitSwitcher, Units } from '@/components/climenda/UnitSwitcher'
 import { Clock } from '@/components/climenda/Clock'
 import { TimeTools } from '@/components/climenda/TimeTools'
+import { WorldMap } from '@/components/climenda/WorldMap'
 import { CloudSun, Search, MapPin } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent } from '@/components/ui/card'
@@ -226,6 +227,7 @@ export default function Home() {
                 <div className="space-y-8 animate-fade-in-up" style={{animationDelay: '200ms'}}>
                     <Clock location={weatherData?.location} />
                     <TimeTools />
+                    <WorldMap coordinates={[weatherData.location.lon, weatherData.location.lat]} />
                     <CalendarView
                       initialDate={weatherData?.location.localtime ? new Date(weatherData.location.localtime) : new Date()}
                       holidays={weatherData?.holidays || []}

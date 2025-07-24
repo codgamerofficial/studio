@@ -58,6 +58,8 @@ export interface LocationInfo {
     country: string;
     localtime: string;
     tz_id: string;
+    lat: number;
+    lon: number;
 }
 
 export interface WeatherData {
