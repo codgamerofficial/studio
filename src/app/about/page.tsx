@@ -50,7 +50,7 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button asChild variant="outline" className="w-full justify-start">
-                  <a href="mailto:saswata.dey@example.com">
+                  <a href="mailto:saswatadey700@gmail.com">
                     <Mail className="mr-2 h-4 w-4" />
                     Email
                   </a>
