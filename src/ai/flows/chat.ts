@@ -19,7 +19,7 @@ const MessageSchema = z.object({
 const ChatInputSchema = z.object({
   message: z.string().describe('The user\'s current message.'),
   history: z.array(MessageSchema).describe('The conversation history.'),
-  weather: z.string().optional().describe('JSON string of current weather conditions.'),
+  weather: z.string().optional().describe('A JSON string of the current weather conditions, including location.'),
 });
 
 export type ChatInput = z.infer<typeof ChatInputSchema>;
@@ -41,11 +41,11 @@ const chatPrompt = ai.definePrompt({
   prompt: `You are a friendly and helpful AI assistant for a weather app called Climenda.
 Your goal is to assist users with their questions about the weather, suggest activities, or just have a pleasant conversation.
 
-You have access to the current weather conditions if the user has provided them.
 {{#if weather}}
-Here is the current weather information:
+You have access to the current weather conditions for the user's location.
+Here is the current weather information in JSON format:
 {{{weather}}}
-Use this information to provide more accurate and relevant responses.
+Use this information to provide more accurate and relevant responses. For example, if the user asks "what should I wear?", you can use the temperature and weather condition to give a good recommendation.
 {{/if}}
 
 Here is the conversation history:
