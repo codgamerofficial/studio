@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { DayPicker, useDayPicker } from "react-day-picker"
+import { DayPicker } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
@@ -52,7 +52,6 @@ function Calendar({
         day_range_middle:
           "aria-selected:bg-accent aria-selected:text-accent-foreground",
         day_hidden: "invisible",
-        holiday: "relative",
         ...classNames,
       }}
       components={{
@@ -62,18 +61,7 @@ function Calendar({
         IconRight: ({ className, ...props }) => (
           <ChevronRight className={cn("h-4 w-4", className)} {...props} />
         ),
-        DayContent: (props) => {
-          const { classNames, ...rest } = props;
-          const isHoliday = props.displayMonth.getMonth() === props.date.getMonth() && props.activeModifiers.holiday;
-          return (
-            <div className="relative w-full h-full flex items-center justify-center">
-              <span>{props.date.getDate()}</span>
-              {isHoliday && (
-                <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full bg-destructive"></span>
-              )}
-            </div>
-          );
-        }
+        ...props.components,
       }}
       {...props}
     />

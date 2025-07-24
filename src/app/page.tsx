@@ -7,7 +7,7 @@ import { z } from 'zod'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
-import { getWeatherData, WeatherData, getAvailableLocations, LocationSuggestion } from '@/lib/weather'
+import { getWeatherData, WeatherData, getAvailableLocations, LocationSuggestion, UserEvent } from '@/lib/weather'
 import { CurrentWeather } from '@/components/climenda/CurrentWeather'
 import { HourlyForecast } from '@/components/climenda/HourlyForecast'
 import { CalendarView } from '@/components/climenda/CalendarView'
@@ -41,6 +41,15 @@ export default function Home() {
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const [userEvents, setUserEvents] = useState<UserEvent[]>([]);
+
+  const handleAddEvent = (event: Omit<UserEvent, 'id'>) => {
+    setUserEvents(prev => [...prev, { ...event, id: Date.now() }]);
+    toast({
+      title: "Event Added",
+      description: `"${event.title}" on ${event.date.toLocaleDateString()}.`,
+    });
+  };
 
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -218,9 +227,11 @@ export default function Home() {
                 <div className="space-y-8 animate-fade-in-up" style={{animationDelay: '200ms'}}>
                     <Clock location={weatherData?.location} />
                     <TimeTools />
-                    <CalendarView 
+                    <CalendarView
                       initialDate={weatherData?.location.localtime ? new Date(weatherData.location.localtime) : new Date()}
                       holidays={weatherData?.holidays || []}
+                      userEvents={userEvents}
+                      onAddEvent={handleAddEvent}
                     />
                     <HolidayDisplay weatherData={weatherData} />
                     <EventSuggestions weather={weatherData?.current ?? null} location={weatherData?.locationName ?? null} />

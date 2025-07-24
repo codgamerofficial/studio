@@ -3,6 +3,12 @@ export interface Holiday {
   name: string;
 }
 
+export interface UserEvent {
+  id: number;
+  date: Date;
+  title: string;
+}
+
 export interface Astro {
     sunrise: string;
     sunset: string;
@@ -69,6 +75,7 @@ export interface LocationSuggestion {
     name: string;
     region: string;
     country: string;
+
     lat: number;
     lon: number;
     url:string;
