@@ -49,25 +49,36 @@ export default function Home() {
   const fetchWeatherData = useCallback((loc: string) => {
     setIsFetchingWeather(true);
     startTransition(async () => {
-      const data = await getWeatherData(loc);
-      if (data) {
-        setWeatherData(data);
-        setLocation(data.location);
-        form.setValue('location', data.location);
-      } else {
+      try {
+        const data = await getWeatherData(loc);
+        if (data) {
+          setWeatherData(data);
+          setLocation(data.location);
+          form.setValue('location', data.location);
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Location not found",
+            description: `Could not fetch weather for ${loc}. Please try another location.`,
+          });
+          if (!weatherData) { // if there's no previous data, fetch for a default
+              const defaultData = await getWeatherData('New York');
+              if (defaultData) {
+                setWeatherData(defaultData);
+                setLocation(defaultData.location);
+                form.setValue('location', defaultData.location);
+              }
+          }
+        }
+      } catch (error) {
         toast({
           variant: "destructive",
-          title: "Location not found",
-          description: `Could not fetch weather for ${loc}. Please try another location.`,
+          title: "Error",
+          description: `An error occurred while fetching weather data.`,
         });
-        if (!weatherData) { // if there's no previous data, fetch for a default
-            const defaultData = await getWeatherData('New York');
-            setWeatherData(defaultData);
-            setLocation('New York');
-            form.setValue('location', 'New York');
-        }
+      } finally {
+        setIsFetchingWeather(false);
       }
-      setIsFetchingWeather(false);
     });
   }, [toast, form, weatherData]);
 
@@ -192,7 +203,7 @@ export default function Home() {
                     <Card><CardContent className="p-6"><Skeleton className="h-24 w-full" /></CardContent></Card>
                 </div>
             </div>
-        ) : (
+        ) : weatherData ? (
             <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 transition-opacity duration-300 ${isPending ? 'opacity-50' : 'opacity-100'}`}>
                 <div className="lg:col-span-2 space-y-8">
                     <CurrentWeather weatherData={weatherData} units={units} />
@@ -204,6 +215,11 @@ export default function Home() {
                     <EventSuggestions weather={weatherData?.current ?? null} location={weatherData?.location ?? null} />
                 </div>
             </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full text-center">
+              <h2 className="text-2xl font-semibold mb-2">Could not load weather data.</h2>
+              <p className="text-muted-foreground">Please try searching for a different location.</p>
+          </div>
         )}
       </main>
       
