@@ -31,7 +31,6 @@ const formSchema = z.object({
 })
 
 export default function Home() {
-  const [location, setLocation] = useState('Manila')
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null)
   const [units, setUnits] = useState<Units>({ temp: 'C', speed: 'kmh' })
   const [isPending, startTransition] = useTransition()
@@ -55,7 +54,7 @@ export default function Home() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      location: "Manila",
+      location: "",
     },
   })
 
@@ -66,7 +65,6 @@ export default function Home() {
         const data = await getWeatherData(loc);
         if (data) {
           setWeatherData(data);
-          setLocation(data.locationName);
           form.setValue('location', data.locationName);
         } else {
           toast({
@@ -78,7 +76,6 @@ export default function Home() {
               const defaultData = await getWeatherData('Manila');
               if (defaultData) {
                 setWeatherData(defaultData);
-                setLocation(defaultData.locationName);
                 form.setValue('location', defaultData.locationName);
               }
           }
@@ -96,7 +93,28 @@ export default function Home() {
   }, [toast, form, weatherData]);
 
   useEffect(() => {
-    fetchWeatherData(location);
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          fetchWeatherData(`${latitude},${longitude}`);
+        },
+        (error) => {
+          console.warn("Geolocation failed or was denied:", error.message);
+          toast({
+            title: "Location Access Denied",
+            description: "Showing weather for default location. Search for a city to see its weather.",
+          });
+          fetchWeatherData('Manila');
+        }
+      );
+    } else {
+        toast({
+            title: "Geolocation Not Supported",
+            description: "Your browser doesn't support geolocation. Showing weather for default location.",
+        });
+        fetchWeatherData('Manila');
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
