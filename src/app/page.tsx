@@ -1,13 +1,13 @@
 'use client'
 
-import React, { useState, useEffect, useTransition } from 'react'
+import React, { useState, useEffect, useTransition, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
-import { getMockWeatherData, WeatherData } from '@/lib/weather'
+import { getMockWeatherData, WeatherData, getAvailableLocations } from '@/lib/weather'
 import { CurrentWeather } from '@/components/climenda/CurrentWeather'
 import { HourlyForecast } from '@/components/climenda/HourlyForecast'
 import { CalendarView } from '@/components/climenda/CalendarView'
@@ -16,6 +16,7 @@ import { EventSuggestions } from '@/components/climenda/EventSuggestions'
 import { UnitSwitcher, Units } from '@/components/climenda/UnitSwitcher'
 import { CloudSun, Search } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
+import { Card, CardContent } from '@/components/ui/card'
 
 
 const formSchema = z.object({
@@ -31,6 +32,12 @@ export default function Home() {
   const [isPending, startTransition] = useTransition()
   const { toast } = useToast();
 
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const availableLocations = getAvailableLocations()
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -41,24 +48,55 @@ export default function Home() {
   useEffect(() => {
     startTransition(() => {
       const data = getMockWeatherData(location);
-      if(data.location.toLowerCase().includes(location.toLowerCase())) {
+      if(data) {
         setWeatherData(data);
       } else {
-        // Fallback for when location is not found in mock data
         const defaultData = getMockWeatherData('new york');
         setWeatherData(defaultData);
         toast({
           variant: "destructive",
           title: "Location not found",
-          description: `Showing weather for New York instead. Try "London" or "Tokyo".`,
+          description: `Showing weather for New York instead.`,
         })
       }
     });
   }, [location, toast])
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleLocationInputChange = (value: string) => {
+    form.setValue('location', value);
+    if (value.length > 0) {
+        const filtered = availableLocations.filter(loc =>
+            loc.toLowerCase().includes(value.toLowerCase())
+        );
+        setSuggestions(filtered);
+        setShowSuggestions(true);
+    } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+    }
+  }
+
+  const handleSuggestionClick = (suggestion: string) => {
+    form.setValue('location', suggestion)
+    setShowSuggestions(false)
+    onSubmit({ location: suggestion })
+  }
   
   function onSubmit(values: z.infer<typeof formSchema>) {
     setLocation(values.location);
-    form.reset({ location: values.location });
+    setShowSuggestions(false);
   }
 
   return (
@@ -70,27 +108,50 @@ export default function Home() {
             <h1 className="text-2xl font-bold">Climenda</h1>
           </div>
           <div className="flex items-center gap-4">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2 items-center">
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="relative">
-                          <Input placeholder="Search location..." {...field} className="w-40 sm:w-64 pr-10" />
-                          <Button type="submit" size="icon" variant="ghost" className="absolute right-0 top-0 h-full">
-                            <Search className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </FormControl>
-                      <FormMessage className="absolute"/>
-                    </FormItem>
-                  )}
-                />
-              </form>
-            </Form>
+            <div ref={searchContainerRef} className="relative">
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2 items-center">
+                  <FormField
+                    control={form.control}
+                    name="location"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="relative">
+                            <Input 
+                              placeholder="Search location..." 
+                              {...field} 
+                              onChange={(e) => handleLocationInputChange(e.target.value)}
+                              onFocus={() => handleLocationInputChange(field.value)}
+                              className="w-40 sm:w-64 pr-10" 
+                            />
+                            <Button type="submit" size="icon" variant="ghost" className="absolute right-0 top-0 h-full">
+                              <Search className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </FormControl>
+                        <FormMessage className="absolute"/>
+                      </FormItem>
+                    )}
+                  />
+                </form>
+              </Form>
+              {showSuggestions && suggestions.length > 0 && (
+                <Card className="absolute top-full mt-2 w-full z-10 max-h-60 overflow-y-auto">
+                    <CardContent className="p-2">
+                        {suggestions.map((suggestion, index) => (
+                            <div 
+                                key={index}
+                                onClick={() => handleSuggestionClick(suggestion)}
+                                className="p-2 hover:bg-accent rounded-md cursor-pointer text-sm"
+                            >
+                                {suggestion}
+                            </div>
+                        ))}
+                    </CardContent>
+                </Card>
+              )}
+            </div>
             <UnitSwitcher units={units} onUnitChange={setUnits} />
           </div>
         </div>

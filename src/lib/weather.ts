@@ -95,8 +95,46 @@ const mockData: Record<string, WeatherData> = {
         { date: "2024-08-11", name: "Mountain Day" },
     ],
   },
+  "paris": {
+    location: "Paris, France",
+    current: {
+        temp_c: 24,
+        temp_f: 75,
+        humidity: 60,
+        wind_kph: 12,
+        wind_mph: 7,
+        condition: "Sunny",
+    },
+    hourly: generateHourlyForecast(24, "Sunny"),
+    holidays: [
+        { date: "2024-07-14", name: "Bastille Day" },
+        { date: "2024-08-15", name: "Assumption of Mary" },
+    ],
+  },
+  "sydney": {
+      location: "Sydney, Australia",
+      current: {
+          temp_c: 18,
+          temp_f: 64,
+          humidity: 65,
+          wind_kph: 25,
+          wind_mph: 16,
+          condition: "Windy",
+      },
+      hourly: generateHourlyForecast(18, "Windy"),
+      holidays: [
+          { date: "2024-10-07", name: "Labour Day" },
+          { date: "2024-12-25", name: "Christmas Day" },
+      ],
+  }
 };
 
-export const getMockWeatherData = (location: string): WeatherData => {
-  return mockData[location.toLowerCase()] || mockData["new york"];
+export const getMockWeatherData = (location: string): WeatherData | null => {
+  const key = location.toLowerCase();
+  const foundKey = Object.keys(mockData).find(k => mockData[k].location.toLowerCase() === key);
+  return mockData[foundKey || key] || null;
 };
+
+export const getAvailableLocations = (): string[] => {
+    return Object.values(mockData).map(data => data.location);
+}
