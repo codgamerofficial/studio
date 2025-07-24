@@ -76,7 +76,7 @@ export function ChatAssistant({ weather, location }: ChatAssistantProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Sparkles className="w-6 h-6 text-primary" />
-          AI Chat Assistant
+          Climenda Assistant
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col gap-4 p-4 pt-0">
