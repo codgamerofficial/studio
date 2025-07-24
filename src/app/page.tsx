@@ -21,6 +21,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DailyForecast } from '@/components/climenda/DailyForecast'
+import { WeatherEffects } from '@/components/climenda/WeatherEffects'
 
 
 const formSchema = z.object({
@@ -130,6 +131,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground font-headline">
+      <WeatherEffects condition={weatherData?.current.condition ?? ''} />
       <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-lg">
         <div className="container flex h-20 items-center justify-between gap-4">
           <div className="flex items-center gap-3">
