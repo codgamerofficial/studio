@@ -4,11 +4,24 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { WeatherData } from "@/lib/weather"
 import { WeatherIcon } from "./WeatherIcon"
 import type { Units } from "./UnitSwitcher"
-import { Droplets, Wind, Sunrise, Sunset, Eye } from "lucide-react"
+import { Droplets, Wind, Sunrise, Sunset, Eye, Leaf } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface CurrentWeatherProps {
   weatherData: WeatherData | null
   units: Units
+}
+
+const getAqiInfo = (aqiIndex: number) => {
+    switch (aqiIndex) {
+        case 1: return { text: 'Good', color: 'text-green-500', bgColor: 'bg-green-500/20' };
+        case 2: return { text: 'Moderate', color: 'text-yellow-500', bgColor: 'bg-yellow-500/20' };
+        case 3: return { text: 'Unhealthy for sensitive groups', color: 'text-orange-500', bgColor: 'bg-orange-500/20' };
+        case 4: return { text: 'Unhealthy', color: 'text-red-500', bgColor: 'bg-red-500/20' };
+        case 5: return { text: 'Very Unhealthy', color: 'text-purple-500', bgColor: 'bg-purple-500/20' };
+        case 6: return { text: 'Hazardous', color: 'text-rose-700', bgColor: 'bg-rose-700/20' };
+        default: return { text: 'Unknown', color: 'text-muted-foreground', bgColor: 'bg-muted/20' };
+    }
 }
 
 export function CurrentWeather({ weatherData, units }: CurrentWeatherProps) {
@@ -30,12 +43,25 @@ export function CurrentWeather({ weatherData, units }: CurrentWeatherProps) {
   const vis = units.speed === 'kmh' ? current.vis_km : current.vis_miles;
 
   const astro = forecastAstro;
+  const aqiIndex = current.air_quality ? current.air_quality['us-epa-index'] : undefined;
+  const aqiInfo = aqiIndex ? getAqiInfo(aqiIndex) : getAqiInfo(0);
+
 
   return (
     <Card className="w-full bg-gradient-to-br from-primary/20 via-card to-card shadow-2xl shadow-primary/10 border-primary/20">
       <CardHeader className="pb-2">
-        <CardTitle className="text-3xl font-bold tracking-tighter">{locationName}</CardTitle>
-        <CardDescription className="text-lg">What it feels like right now.</CardDescription>
+        <div className="flex justify-between items-start">
+            <div>
+                <CardTitle className="text-3xl font-bold tracking-tighter">{locationName}</CardTitle>
+                <CardDescription className="text-lg">What it feels like right now.</CardDescription>
+            </div>
+            {aqiIndex && (
+                 <div title={`Air Quality Index: ${aqiInfo.text}`} className={cn("flex items-center gap-2 text-sm font-medium px-3 py-1 rounded-full", aqiInfo.bgColor, aqiInfo.color)}>
+                    <Leaf className="w-4 h-4" />
+                    <span>{aqiInfo.text}</span>
+                </div>
+            )}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col sm:flex-row items-center justify-between gap-8">

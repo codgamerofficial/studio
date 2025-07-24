@@ -29,6 +29,10 @@ export interface HourlyForecast {
   condition: string;
 }
 
+export interface AirQuality {
+    "us-epa-index": number;
+}
+
 export interface CurrentWeather {
   temp_c: number;
   temp_f: number;
@@ -40,6 +44,7 @@ export interface CurrentWeather {
   vis_km: number;
   vis_miles: number;
   condition: string;
+  air_quality?: AirQuality;
 }
 
 export interface LocationInfo {
@@ -92,6 +97,7 @@ export const getWeatherData = async (location: string): Promise<WeatherData | nu
         vis_km: data.current.vis_km,
         vis_miles: data.current.vis_miles,
         condition: data.current.condition.text,
+        air_quality: data.current.air_quality,
       },
       hourly: data.forecast.forecastday[0].hour.map((h: any) => ({
         time: h.time.split(' ')[1],
