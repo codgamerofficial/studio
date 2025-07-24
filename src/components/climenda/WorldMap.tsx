@@ -6,12 +6,13 @@ import {
   Geographies,
   Geography,
   Marker,
+  ZoomableGroup
 } from 'react-simple-maps';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Globe } from 'lucide-react';
 
 const geoUrl =
-  'https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json';
+  'https://raw.githubusercontent.com/deldersveld/topojson/master/world-110m.json';
 
 interface WorldMapProps {
   coordinates: [number, number];
@@ -30,27 +31,34 @@ export function WorldMap({ coordinates }: WorldMapProps) {
         <ComposableMap
           projection="geoMercator"
           projectionConfig={{
-            scale: 400, // Increased scale for better zoom
-            center: coordinates, // Center map on the selected location
+            rotate: [-10, 0, 0],
+            scale: 100
           }}
           style={{ width: '100%', height: '100%' }}
         >
-          <Geographies geography={geoUrl}>
-            {({ geographies }) =>
-              geographies.map((geo) => (
-                <Geography
-                  key={geo.rsmKey}
-                  geography={geo}
-                  fill="#EAEAEC20"
-                  stroke="#FFFFFF40"
-                  strokeWidth={0.5}
-                />
-              ))
-            }
-          </Geographies>
-          <Marker coordinates={coordinates}>
-            <circle r={5} fill="hsl(var(--primary))" stroke="#fff" strokeWidth={2} />
-          </Marker>
+          <ZoomableGroup center={coordinates} zoom={8}>
+            <Geographies geography={geoUrl}>
+              {({ geographies }) =>
+                geographies.map((geo) => (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    fill="hsl(var(--muted))"
+                    stroke="hsl(var(--background))"
+                    strokeWidth={0.2}
+                    style={{
+                      default: { outline: 'none' },
+                      hover: { outline: 'none' },
+                      pressed: { outline: 'none' },
+                    }}
+                  />
+                ))
+              }
+            </Geographies>
+            <Marker coordinates={coordinates}>
+              <circle r={2} fill="hsl(var(--primary))" stroke="#fff" strokeWidth={0.5} />
+            </Marker>
+          </ZoomableGroup>
         </ComposableMap>
       </CardContent>
     </Card>
