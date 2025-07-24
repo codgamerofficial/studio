@@ -17,7 +17,7 @@ export function ClickSoundProvider({ children }: { children: React.ReactNode }) 
     return (
         <div onClick={handlePlaySound} className="contents">
             {children}
-            <audio id="click-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_273180d136.mp3" preload="auto"></audio>
+            <audio id="click-sound" src="https://actions.google.com/sounds/v1/weapons/big_punch_with_grunt.ogg" preload="auto"></audio>
         </div>
     );
 }
