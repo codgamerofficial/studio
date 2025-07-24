@@ -218,7 +218,10 @@ export default function Home() {
                 <div className="space-y-8 animate-fade-in-up" style={{animationDelay: '200ms'}}>
                     <Clock location={weatherData?.location} />
                     <TimeTools />
-                    <CalendarView initialDate={weatherData?.location.localtime ? new Date(weatherData.location.localtime) : new Date()} />
+                    <CalendarView 
+                      initialDate={weatherData?.location.localtime ? new Date(weatherData.location.localtime) : new Date()}
+                      holidays={weatherData?.holidays || []}
+                    />
                     <HolidayDisplay weatherData={weatherData} />
                     <EventSuggestions weather={weatherData?.current ?? null} location={weatherData?.locationName ?? null} />
                 </div>
