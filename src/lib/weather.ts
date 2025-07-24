@@ -18,6 +18,7 @@ export interface DayForecast {
     avgtemp_f: number;
     daily_chance_of_rain: number;
     condition: string;
+    totalprecip_mm: number;
 }
 
 export interface HourlyForecast {
@@ -100,6 +101,7 @@ export const getWeatherData = async (location: string): Promise<WeatherData | nu
         avgtemp_f: d.day.avgtemp_f,
         daily_chance_of_rain: d.day.daily_chance_of_rain,
         condition: d.day.condition.text,
+        totalprecip_mm: d.day.totalprecip_mm,
       })),
       holidays: data.holidays?.map((h: any) => ({
         date: h.date,
