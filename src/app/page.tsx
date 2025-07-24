@@ -114,11 +114,13 @@ export default function Home() {
   const handleSuggestionClick = (suggestion: LocationSuggestion) => {
     const suggestionString = `${suggestion.name}, ${suggestion.country}`;
     form.setValue('location', suggestionString);
+    setSuggestions([]);
     setShowSuggestions(false);
     onSubmit({ location: suggestionString });
   }
   
   function onSubmit(values: z.infer<typeof formSchema>) {
+    setSuggestions([]);
     setShowSuggestions(false);
     fetchWeatherData(values.location);
   }
@@ -146,7 +148,11 @@ export default function Home() {
                               placeholder="Search location..." 
                               {...field} 
                               onChange={(e) => handleLocationInputChange(e.target.value)}
-                              onFocus={() => handleLocationInputChange(field.value)}
+                              onFocus={() => {
+                                if (field.value.length > 2) {
+                                  setShowSuggestions(true);
+                                }
+                              }}
                               autoComplete="off"
                               className="w-40 sm:w-64 pr-10" 
                             />
@@ -167,7 +173,7 @@ export default function Home() {
                         {suggestions.map((suggestion) => (
                             <div 
                                 key={suggestion.id}
-                                onClick={() => handleSuggestionClick(suggestion)}
+                                onMouseDown={() => handleSuggestionClick(suggestion)}
                                 className="p-2 hover:bg-accent rounded-md cursor-pointer text-sm"
                             >
                                 {suggestion.name}, {suggestion.country}
