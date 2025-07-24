@@ -22,6 +22,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DailyForecast } from '@/components/climenda/DailyForecast'
 import { WeatherEffects } from '@/components/climenda/WeatherEffects'
+import Link from 'next/link'
 
 
 const formSchema = z.object({
@@ -268,10 +269,13 @@ export default function Home() {
       </main>
       
       <footer className="py-6 md:px-8 md:py-0 border-t border-white/10 mt-8">
-        <div className="container flex flex-col items-center justify-center gap-4 md:h-24 md:flex-row">
+        <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
           <p className="text-balance text-center text-sm leading-loose text-muted-foreground">
             Built with Next.js, ShadCN/UI and Genkit. Designed with a funky vibe.
           </p>
+          <Link href="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            About the Founder
+          </Link>
         </div>
       </footer>
     </div>
