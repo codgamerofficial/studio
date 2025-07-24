@@ -58,7 +58,7 @@ export default function Home() {
     },
   })
 
-  const fetchWeatherData = useCallback((loc: string) => {
+  const fetchWeatherData = useCallback((loc: string, isDefaultFallback = false) => {
     setIsFetchingWeather(true);
     startTransition(async () => {
       try {
@@ -72,8 +72,11 @@ export default function Home() {
             title: "Location not found",
             description: `Could not fetch weather for ${loc}. Please try another location.`,
           });
-          if (!weatherData) { // if there's no previous data, fetch for a default
-              const defaultData = await getWeatherData('Manila');
+          // If this fetch was the result of a fallback, don't try again.
+          if (isDefaultFallback) {
+              setWeatherData(null);
+          } else if (!weatherData) { // if there's no previous data, fetch for a default
+              const defaultData = await getWeatherData('Manila', true);
               if (defaultData) {
                 setWeatherData(defaultData);
                 form.setValue('location', defaultData.locationName);
@@ -86,6 +89,7 @@ export default function Home() {
           title: "Error",
           description: `An error occurred while fetching weather data.`,
         });
+        setWeatherData(null);
       } finally {
         setIsFetchingWeather(false);
       }
@@ -105,7 +109,7 @@ export default function Home() {
             title: "Location Access Denied",
             description: "Showing weather for default location. Search for a city to see its weather.",
           });
-          fetchWeatherData('Manila');
+          fetchWeatherData('Manila', true);
         }
       );
     } else {
@@ -113,7 +117,7 @@ export default function Home() {
             title: "Geolocation Not Supported",
             description: "Your browser doesn't support geolocation. Showing weather for default location.",
         });
-        fetchWeatherData('Manila');
+        fetchWeatherData('Manila', true);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
