@@ -42,8 +42,16 @@ export interface CurrentWeather {
   condition: string;
 }
 
+export interface LocationInfo {
+    name: string;
+    country: string;
+    localtime: string;
+    tz_id: string;
+}
+
 export interface WeatherData {
-  location: string;
+  location: LocationInfo;
+  locationName: string;
   current: CurrentWeather;
   hourly: HourlyForecast[];
   daily: DayForecast[];
@@ -71,7 +79,8 @@ export const getWeatherData = async (location: string): Promise<WeatherData | nu
     const data = await response.json();
 
     const weatherData: WeatherData = {
-      location: `${data.location.name}, ${data.location.country}`,
+      location: data.location,
+      locationName: `${data.location.name}, ${data.location.country}`,
       current: {
         temp_c: data.current.temp_c,
         temp_f: data.current.temp_f,

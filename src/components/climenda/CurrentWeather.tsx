@@ -23,7 +23,7 @@ export function CurrentWeather({ weatherData, units }: CurrentWeatherProps) {
     )
   }
 
-  const { current, location, forecastAstro } = weatherData;
+  const { current, locationName, forecastAstro } = weatherData;
   const temp = units.temp === 'C' ? current.temp_c : current.temp_f;
   const feelsLike = units.temp === 'C' ? current.feelslike_c : current.feelslike_f;
   const speed = units.speed === 'kmh' ? current.wind_kph : current.wind_mph;
@@ -34,7 +34,7 @@ export function CurrentWeather({ weatherData, units }: CurrentWeatherProps) {
   return (
     <Card className="w-full bg-gradient-to-br from-primary/20 via-card to-card shadow-2xl shadow-primary/10 border-primary/20">
       <CardHeader className="pb-2">
-        <CardTitle className="text-3xl font-bold tracking-tighter">{location}</CardTitle>
+        <CardTitle className="text-3xl font-bold tracking-tighter">{locationName}</CardTitle>
         <CardDescription className="text-lg">What it feels like right now.</CardDescription>
       </CardHeader>
       <CardContent>

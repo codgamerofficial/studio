@@ -34,7 +34,7 @@ export function EventSuggestions({ weather, location }: EventSuggestionsProps) {
   }, [weather, location])
 
   return (
-    <Card>
+    <Card className="bg-card/80 backdrop-blur-sm">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Lightbulb className="w-6 h-6 text-primary" />

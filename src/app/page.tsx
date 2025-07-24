@@ -57,8 +57,8 @@ export default function Home() {
         const data = await getWeatherData(loc);
         if (data) {
           setWeatherData(data);
-          setLocation(data.location);
-          form.setValue('location', data.location);
+          setLocation(data.locationName);
+          form.setValue('location', data.locationName);
         } else {
           toast({
             variant: "destructive",
@@ -69,8 +69,8 @@ export default function Home() {
               const defaultData = await getWeatherData('Manila');
               if (defaultData) {
                 setWeatherData(defaultData);
-                setLocation(defaultData.location);
-                form.setValue('location', defaultData.location);
+                setLocation(defaultData.locationName);
+                form.setValue('location', defaultData.locationName);
               }
           }
         }
@@ -218,9 +218,9 @@ export default function Home() {
                 <div className="space-y-8 animate-in fade-in-0 slide-in-from-bottom-10 duration-500 delay-200">
                     <Clock />
                     <TimeTools />
-                    <CalendarView />
+                    <CalendarView initialDate={weatherData?.location.localtime ? new Date(weatherData.location.localtime) : new Date()} />
                     <HolidayDisplay weatherData={weatherData} />
-                    <EventSuggestions weather={weatherData?.current ?? null} location={weatherData?.location ?? null} />
+                    <EventSuggestions weather={weatherData?.current ?? null} location={weatherData?.locationName ?? null} />
                 </div>
             </div>
         ) : (
