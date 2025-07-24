@@ -31,9 +31,11 @@ export function Clock() {
   const minutesDegrees = (time.minutes + time.seconds / 60) * 6;
   const secondsDegrees = time.seconds * 6;
 
+  const formatTime = (num: number) => num.toString().padStart(2, '0');
+
   return (
     <Card className="bg-card/80 backdrop-blur-sm shadow-lg">
-      <CardContent className="p-4 flex items-center justify-center">
+      <CardContent className="p-4 flex flex-col items-center justify-center gap-4">
         <div className="relative w-48 h-48 rounded-full border-4 border-primary bg-background shadow-inner">
           {/* Clock face */}
           <div className="absolute inset-0 flex items-center justify-center">
@@ -71,6 +73,11 @@ export function Clock() {
             className="absolute bottom-1/2 left-1/2 w-0.5 h-[45%] bg-primary origin-bottom transition-transform duration-200"
             style={{ transform: `translateX(-50%) rotate(${secondsDegrees}deg)` }}
           />
+        </div>
+        <div className="font-mono text-2xl text-foreground tracking-widest">
+            <span>{formatTime(time.hours)}</span>:
+            <span>{formatTime(time.minutes)}</span>:
+            <span className="text-primary">{formatTime(time.seconds)}</span>
         </div>
       </CardContent>
     </Card>
