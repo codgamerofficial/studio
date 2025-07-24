@@ -18,7 +18,7 @@ export default function AboutPage() {
                 <h1 className="text-lg md:text-3xl font-bold tracking-tighter">Back to Climenda</h1>
             </Link>
           </div>
-          <h2 className="text-xl md:text-2xl font-bold tracking-tighter text-primary text-right">About the Founder</h2>
+          <h2 className="text-xl md:text-2xl font-bold tracking-tighter text-primary text-right flex-shrink-0">About the Founder</h2>
         </div>
       </header>
 
@@ -31,8 +31,7 @@ export default function AboutPage() {
                   <Image
                     src="https://storage.googleapis.com/gemini-studio-assets/business-logo/user-provided-image-a3357a6c-4809-4785-885f-73b334693b4a.jpeg"
                     alt="Founder's Profile Picture"
-                    width={192}
-                    height={192}
+                    fill
                     data-ai-hint="man portrait"
                     className="rounded-full object-cover border-4 border-primary shadow-lg"
                   />
