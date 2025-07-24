@@ -29,7 +29,7 @@ export default function AboutPage() {
               <CardContent className="p-6 flex flex-col items-center text-center">
                 <div className="relative w-48 h-48 mb-4">
                   <Image
-                    src="https://storage.googleapis.com/gemini-studio-assets/business-logo/user-provided-image-a3357a6c-4809-4785-885f-73b334693b4a.jpeg"
+                    src="https://storage.googleapis.com/gemini-studio-assets/business-logo/user-provided-image-02d93e15-8968-422f-b489-0c3090859a5c.jpeg"
                     alt="Founder's Profile Picture"
                     fill
                     data-ai-hint="man portrait"
