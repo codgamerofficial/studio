@@ -11,7 +11,6 @@ import { getWeatherData, WeatherData, getAvailableLocations, LocationSuggestion,
 import { CurrentWeather } from '@/components/climenda/CurrentWeather'
 import { HourlyForecast } from '@/components/climenda/HourlyForecast'
 import { CalendarView } from '@/components/climenda/CalendarView'
-import { HolidayDisplay } from '@/components/climenda/HolidayDisplay'
 import { EventSuggestions } from '@/components/climenda/EventSuggestions'
 import { UnitSwitcher, Units } from '@/components/climenda/UnitSwitcher'
 import { Clock } from '@/components/climenda/Clock'
@@ -233,7 +232,6 @@ export default function Home() {
                       userEvents={userEvents}
                       onAddEvent={handleAddEvent}
                     />
-                    <HolidayDisplay weatherData={weatherData} />
                     <EventSuggestions weather={weatherData?.current ?? null} location={weatherData?.locationName ?? null} />
                 </div>
             </div>

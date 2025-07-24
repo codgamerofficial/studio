@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Calendar } from "@/components/ui/calendar"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, PlusCircle } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Holiday, UserEvent } from '@/lib/weather'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { DayPicker, useDayPicker } from "react-day-picker";
 
 const eventFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -83,7 +84,7 @@ interface CalendarViewProps {
 export function CalendarView({ initialDate, holidays, userEvents, onAddEvent }: CalendarViewProps) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(initialDate);
   const [currentMonth, setCurrentMonth] = useState(initialDate);
-  const [today, setToday] = useState(initialDate);
+  const [today, setToday] = useState(new Date());
 
   useEffect(() => {
     const locationToday = new Date(initialDate);
