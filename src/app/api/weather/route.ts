@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Location parameter is required.' }, { status: 400 });
   }
 
-  const forecastUrl = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${location}&days=1`;
+  const forecastUrl = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${location}&days=7`;
   const holidaysUrl = `https://api.weatherapi.com/v1/holidays.json?key=${apiKey}&q=${location}&dt=${new Date().getFullYear()}-01-01`;
   
   try {

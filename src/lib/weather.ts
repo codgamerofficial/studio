@@ -8,8 +8,16 @@ export interface Astro {
     sunset: string;
 }
 
-export interface Forecast {
-    astro: Astro
+export interface DayForecast {
+    date: string;
+    maxtemp_c: number;
+    maxtemp_f: number;
+    mintemp_c: number;
+    mintemp_f: number;
+    avgtemp_c: number;
+    avgtemp_f: number;
+    daily_chance_of_rain: number;
+    condition: string;
 }
 
 export interface HourlyForecast {
@@ -37,8 +45,9 @@ export interface WeatherData {
   location: string;
   current: CurrentWeather;
   hourly: HourlyForecast[];
+  daily: DayForecast[];
   holidays: Holiday[];
-  forecast?: Forecast;
+  forecastAstro?: Astro;
 }
 
 export interface LocationSuggestion {
@@ -81,13 +90,22 @@ export const getWeatherData = async (location: string): Promise<WeatherData | nu
         chance_of_rain: h.chance_of_rain,
         condition: h.condition.text,
       })),
+      daily: data.forecast.forecastday.map((d: any) => ({
+        date: d.date,
+        maxtemp_c: d.day.maxtemp_c,
+        maxtemp_f: d.day.maxtemp_f,
+        mintemp_c: d.day.mintemp_c,
+        mintemp_f: d.day.mintemp_f,
+        avgtemp_c: d.day.avgtemp_c,
+        avgtemp_f: d.day.avgtemp_f,
+        daily_chance_of_rain: d.day.daily_chance_of_rain,
+        condition: d.day.condition.text,
+      })),
       holidays: data.holidays?.map((h: any) => ({
         date: h.date,
         name: h.name,
       })) || [],
-      forecast: {
-        astro: data.forecast.forecastday[0].astro,
-      }
+      forecastAstro: data.forecast.forecastday[0].astro,
     };
     return weatherData;
   } catch (error) {

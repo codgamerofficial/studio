@@ -20,6 +20,7 @@ import { CloudSun, Search, MapPin } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { DailyForecast } from '@/components/climenda/DailyForecast'
 
 
 const formSchema = z.object({
@@ -196,6 +197,7 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-8">
                     <Skeleton className="h-56 w-full rounded-2xl" />
+                    <Skeleton className="h-[22rem] w-full rounded-2xl" />
                     <Skeleton className="h-72 w-full rounded-2xl" />
                 </div>
                 <div className="space-y-8">
@@ -208,6 +210,7 @@ export default function Home() {
             <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 transition-opacity duration-500 ${isPending ? 'opacity-30' : 'opacity-100'}`}>
                 <div className="lg:col-span-2 space-y-8 animate-in fade-in-0 slide-in-from-bottom-10 duration-500">
                     <CurrentWeather weatherData={weatherData} units={units} />
+                    <DailyForecast weatherData={weatherData} units={units} />
                     <HourlyForecast weatherData={weatherData} units={units} />
                 </div>
                 <div className="space-y-8 animate-in fade-in-0 slide-in-from-bottom-10 duration-500 delay-200">

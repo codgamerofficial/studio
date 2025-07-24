@@ -23,13 +23,13 @@ export function CurrentWeather({ weatherData, units }: CurrentWeatherProps) {
     )
   }
 
-  const { current, location, forecast } = weatherData;
+  const { current, location, forecastAstro } = weatherData;
   const temp = units.temp === 'C' ? current.temp_c : current.temp_f;
   const feelsLike = units.temp === 'C' ? current.feelslike_c : current.feelslike_f;
   const speed = units.speed === 'kmh' ? current.wind_kph : current.wind_mph;
   const vis = units.speed === 'kmh' ? current.vis_km : current.vis_miles;
 
-  const astro = forecast?.astro;
+  const astro = forecastAstro;
 
   return (
     <Card className="w-full bg-gradient-to-br from-primary/20 via-card to-card shadow-2xl shadow-primary/10 border-primary/20">
