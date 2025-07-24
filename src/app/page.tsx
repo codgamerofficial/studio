@@ -11,7 +11,7 @@ import { getWeatherData, WeatherData, getAvailableLocations, LocationSuggestion,
 import { CurrentWeather } from '@/components/climenda/CurrentWeather'
 import { HourlyForecast } from '@/components/climenda/HourlyForecast'
 import { CalendarView } from '@/components/climenda/CalendarView'
-import { EventSuggestions } from '@/components/climenda/EventSuggestions'
+import { ChatAssistant } from '@/components/climenda/ChatAssistant'
 import { UnitSwitcher, Units } from '@/components/climenda/UnitSwitcher'
 import { Clock } from '@/components/climenda/Clock'
 import { TimeTools } from '@/components/climenda/TimeTools'
@@ -257,7 +257,7 @@ export default function Home() {
                       userEvents={userEvents}
                       onAddEvent={handleAddEvent}
                     />
-                    <EventSuggestions weather={weatherData?.current ?? null} location={weatherData?.locationName ?? null} />
+                    <ChatAssistant weather={weatherData?.current ?? null} location={weatherData?.locationName ?? null} />
                 </div>
             </div>
         ) : (
