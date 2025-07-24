@@ -14,6 +14,7 @@ import { CalendarView } from '@/components/climenda/CalendarView'
 import { HolidayDisplay } from '@/components/climenda/HolidayDisplay'
 import { EventSuggestions } from '@/components/climenda/EventSuggestions'
 import { UnitSwitcher, Units } from '@/components/climenda/UnitSwitcher'
+import { Clock } from '@/components/climenda/Clock'
 import { CloudSun, Search, MapPin } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent } from '@/components/ui/card'
@@ -209,6 +210,7 @@ export default function Home() {
                     <HourlyForecast weatherData={weatherData} units={units} />
                 </div>
                 <div className="space-y-8 animate-in fade-in-0 slide-in-from-bottom-10 duration-500 delay-200">
+                    <Clock />
                     <CalendarView />
                     <HolidayDisplay weatherData={weatherData} />
                     <EventSuggestions weather={weatherData?.current ?? null} location={weatherData?.location ?? null} />
