@@ -31,7 +31,7 @@ export function ChatAssistant({ weather, location }: ChatAssistantProps) {
     setMessages([
         {
             role: 'model',
-            content: `Hello! I'm your Climenda AI assistant. How can I help you today? You can ask me about the weather, for activity ideas, or anything else!`,
+            content: `Hello! I'm your Climenda AI assistant. How can I help you with the weather today?`,
         }
     ]);
   }, []);
@@ -49,16 +49,17 @@ export function ChatAssistant({ weather, location }: ChatAssistantProps) {
     e.preventDefault();
     if (!input.trim() || isPending) return;
 
-    const userMessage: Message = { role: 'user', content: input };
-    setMessages(prev => [...prev, userMessage]);
+    const newMessages: Message[] = [...messages, { role: 'user', content: input }];
+    setMessages(newMessages);
+    const messageToSend = input;
     setInput('');
     setError(null);
 
     startTransition(async () => {
       try {
         const chatInput: ChatInput = {
-          message: input,
-          history: messages,
+          message: messageToSend,
+          history: newMessages.slice(0, -1), // Pass history without the current message
           weather: weather ? JSON.stringify({ ...weather, location }) : undefined,
         };
         const result = await chat(chatInput);
