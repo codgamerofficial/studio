@@ -1,6 +1,8 @@
 'use client'
 
 import React, { useEffect, useState, useMemo, useRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { Volume2, VolumeX } from 'lucide-react';
 
 const Rain = React.memo(() => {
     const raindrops = useMemo(() => Array.from({ length: 100 }).map((_, i) => {
@@ -29,6 +31,7 @@ interface WeatherEffectsProps {
 export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const [isClient, setIsClient] = useState(false);
     const [key, setKey] = useState(0);
+    const [isMuted, setIsMuted] = useState(true);
     const rainAudioRef = useRef<HTMLAudioElement>(null);
     const thunderAudioRef = useRef<HTMLAudioElement>(null);
 
@@ -44,26 +47,29 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const isThundering = lowerCaseCondition.includes('thunder') || lowerCaseCondition.includes('storm');
     const isRaining = lowerCaseCondition.includes('rain') || lowerCaseCondition.includes('drizzle') || isThundering;
 
-    useEffect(() => {
-        const playAudio = (ref: React.RefObject<HTMLAudioElement>) => {
-            if (ref.current) {
-                ref.current.play().catch(error => {
-                    // Autoplay was prevented.
-                });
-            }
-        };
+    const playAudio = (ref: React.RefObject<HTMLAudioElement>) => {
+        if (ref.current) {
+            ref.current.play().catch(error => {
+                // Autoplay was prevented. User needs to interact with the page first.
+                console.warn("Audio autoplay was prevented. Please interact with the page to enable sound.");
+            });
+        }
+    };
+    
+    const pauseAudio = (ref: React.RefObject<HTMLAudioElement>) => {
+        if (ref.current) {
+            ref.current.pause();
+            ref.current.currentTime = 0;
+        }
+    };
 
-        const pauseAudio = (ref: React.RefObject<HTMLAudioElement>) => {
-            if (ref.current) {
-                ref.current.pause();
-                ref.current.currentTime = 0; 
-            }
-        };
+    useEffect(() => {
+        if (!isClient) return;
 
         if (isRaining) {
-            playAudio(rainAudioRef);
+             playAudio(rainAudioRef);
         } else {
-            pauseAudio(rainAudioRef);
+             pauseAudio(rainAudioRef);
         }
 
         if (isThundering) {
@@ -74,15 +80,51 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
 
     }, [isRaining, isThundering, isClient]);
 
+    const handleUnmute = () => {
+        setIsMuted(false);
+        if (rainAudioRef.current) rainAudioRef.current.muted = false;
+        if (thunderAudioRef.current) thunderAudioRef.current.muted = false;
+
+        // Re-trigger play in case it was blocked
+        if (isRaining) playAudio(rainAudioRef);
+        if (isThundering) playAudio(thunderAudioRef);
+    }
+    
+    const handleMute = () => {
+        setIsMuted(true);
+        if (rainAudioRef.current) rainAudioRef.current.muted = true;
+        if (thunderAudioRef.current) thunderAudioRef.current.muted = true;
+    }
+
+
     if (!isClient) return null;
+
+    const showEffects = isRaining || isThundering;
 
     return (
         <div key={key} className="fixed top-0 left-0 w-full h-full pointer-events-none z-[9999]">
             {isRaining && <Rain />}
             {isThundering && <Thunderstorm />}
             
-            <audio ref={rainAudioRef} src="https://cdn.pixabay.com/download/audio/2022/08/17/audio_342d7a221f.mp3" loop muted={false} preload="auto"></audio>
-            <audio ref={thunderAudioRef} src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_e56f4e3ece.mp3" loop muted={false} preload="auto"></audio>
+            <audio ref={rainAudioRef} src="https://cdn.pixabay.com/download/audio/2022/08/17/audio_342d7a221f.mp3" loop muted preload="auto"></audio>
+            <audio ref={thunderAudioRef} src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_e56f4e3ece.mp3" loop muted preload="auto"></audio>
+
+            {showEffects && (
+                <div className="fixed bottom-5 right-5 pointer-events-auto">
+                    {isMuted ? (
+                        <Button onClick={handleUnmute} variant="outline" size="icon" className="rounded-full bg-background/50 backdrop-blur-sm">
+                            <VolumeX className="w-5 h-5" />
+                            <span className="sr-only">Unmute</span>
+                        </Button>
+                    ) : (
+                        <Button onClick={handleMute} variant="outline" size="icon" className="rounded-full bg-background/50 backdrop-blur-sm">
+                            <Volume2 className="w-5 h-5" />
+                             <span className="sr-only">Mute</span>
+                        </Button>
+                    )}
+                </div>
+            )}
+
 
             <style jsx global>{`
                 @keyframes fall {
