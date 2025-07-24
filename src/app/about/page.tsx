@@ -15,7 +15,7 @@ export default function AboutPage() {
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-3">
                 <Home className="h-8 w-8 text-primary hover:text-primary/80 transition-colors" />
-                <h1 className="text-3xl font-bold tracking-tighter hidden sm:block">Back to Climenda</h1>
+                <h1 className="text-3xl font-bold tracking-tighter">Back to Climenda</h1>
             </Link>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tighter text-primary">About the Founder</h2>
