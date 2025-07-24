@@ -41,8 +41,8 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
     if (!isClient) return null;
     
     const lowerCaseCondition = condition.toLowerCase();
-    const isRaining = lowerCaseCondition.includes('rain') || lowerCaseCondition.includes('drizzle');
     const isThundering = lowerCaseCondition.includes('thunder') || lowerCaseCondition.includes('storm');
+    const isRaining = lowerCaseCondition.includes('rain') || lowerCaseCondition.includes('drizzle') || isThundering;
 
     return (
         <div key={key} className="fixed top-0 left-0 w-full h-full pointer-events-none z-[9999]">
