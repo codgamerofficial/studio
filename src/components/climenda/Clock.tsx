@@ -18,6 +18,7 @@ export function Clock({ location }: ClockProps) {
 
   useEffect(() => {
     const updateClock = () => {
+      const now = new Date();
       const options: Intl.DateTimeFormatOptions = {
         hour: '2-digit',
         minute: '2-digit',
@@ -29,8 +30,7 @@ export function Clock({ location }: ClockProps) {
         options.timeZone = location.tz_id;
       }
       
-      const formatter = new Intl.DateTimeFormat([], options);
-      const now = location?.localtime ? new Date(location.localtime) : new Date();
+      const formatter = new Intl.DateTimeFormat('en-US', options);
       const parts = formatter.formatToParts(now);
       
       let hours = 0, minutes = 0, seconds = 0;
@@ -44,8 +44,8 @@ export function Clock({ location }: ClockProps) {
       setTime({ hours, minutes, seconds });
     };
     
-    updateClock();
     const timerId = setInterval(updateClock, 1000);
+    updateClock(); // Initial call to set time immediately
     
     return () => clearInterval(timerId);
   }, [location]);
@@ -93,7 +93,7 @@ export function Clock({ location }: ClockProps) {
           
           {/* Second hand */}
           <div
-            className="absolute bottom-1/2 left-1/2 w-0.5 h-[45%] bg-primary origin-bottom transition-transform duration-200"
+            className="absolute bottom-1/2 left-1/2 w-0.5 h-[45%] bg-primary origin-bottom transition-transform"
             style={{ transform: `translateX(-50%) rotate(${secondsDegrees}deg)` }}
           />
         </div>
