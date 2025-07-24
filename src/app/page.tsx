@@ -273,9 +273,9 @@ export default function Home() {
           <p className="text-balance text-center text-sm leading-loose text-muted-foreground">
             Built with Next.js, ShadCN/UI and Genkit. Designed with a funky vibe.
           </p>
-          <Link href="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-            About the Founder
-          </Link>
+          <Button asChild>
+            <Link href="/about">About the Founder</Link>
+          </Button>
         </div>
       </footer>
     </div>
