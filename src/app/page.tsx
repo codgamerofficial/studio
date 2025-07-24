@@ -14,7 +14,7 @@ import { CalendarView } from '@/components/climenda/CalendarView'
 import { HolidayDisplay } from '@/components/climenda/HolidayDisplay'
 import { EventSuggestions } from '@/components/climenda/EventSuggestions'
 import { UnitSwitcher, Units } from '@/components/climenda/UnitSwitcher'
-import { CloudSun, Search } from 'lucide-react'
+import { CloudSun, Search, MapPin } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -127,11 +127,11 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground font-headline">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <CloudSun className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold">Climenda</h1>
+      <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-lg">
+        <div className="container flex h-20 items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <CloudSun className="h-10 w-10 text-primary" />
+            <h1 className="text-3xl font-bold tracking-tighter">Climenda</h1>
           </div>
           <div className="flex items-center gap-4">
             <div ref={searchContainerRef} className="relative">
@@ -154,10 +154,10 @@ export default function Home() {
                                 }
                               }}
                               autoComplete="off"
-                              className="w-40 sm:w-64 pr-10" 
+                              className="w-48 sm:w-72 pr-10 bg-card border-2 border-primary/50 focus:border-primary transition-all duration-300 rounded-full" 
                             />
-                            <Button type="submit" size="icon" variant="ghost" className="absolute right-0 top-0 h-full">
-                              <Search className="h-4 w-4" />
+                            <Button type="submit" size="icon" variant="ghost" className="absolute right-0 top-0 h-full hover:bg-transparent">
+                              <Search className="h-5 w-5 text-primary/80 hover:text-primary" />
                             </Button>
                           </div>
                         </FormControl>
@@ -168,15 +168,16 @@ export default function Home() {
                 </form>
               </Form>
               {showSuggestions && suggestions.length > 0 && (
-                <Card className="absolute top-full mt-2 w-full z-10 max-h-60 overflow-y-auto">
+                <Card className="absolute top-full mt-2 w-full z-50 max-h-72 overflow-y-auto bg-card/90 backdrop-blur-lg border-primary/30 animate-in fade-in-0 zoom-in-95">
                     <CardContent className="p-2">
                         {suggestions.map((suggestion) => (
                             <div 
                                 key={suggestion.id}
                                 onMouseDown={() => handleSuggestionClick(suggestion)}
-                                className="p-2 hover:bg-accent rounded-md cursor-pointer text-sm"
+                                className="flex items-center gap-3 p-3 hover:bg-primary/20 rounded-lg cursor-pointer text-sm transition-colors duration-200"
                             >
-                                {suggestion.name}, {suggestion.country}
+                                <MapPin className="w-5 h-5 text-accent" />
+                                <span>{suggestion.name}, {suggestion.country}</span>
                             </div>
                         ))}
                     </CardContent>
@@ -192,30 +193,22 @@ export default function Home() {
         {(isPending || isFetchingWeather) ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-8">
-                    <Card>
-                        <CardContent className="p-6">
-                            <Skeleton className="h-32 w-full" />
-                        </CardContent>
-                    </Card>
-                     <Card>
-                        <CardContent className="p-6">
-                            <Skeleton className="h-64 w-full" />
-                        </CardContent>
-                    </Card>
+                    <Skeleton className="h-56 w-full rounded-2xl" />
+                    <Skeleton className="h-72 w-full rounded-2xl" />
                 </div>
                 <div className="space-y-8">
-                    <Card><CardContent className="p-6"><Skeleton className="h-72 w-full" /></CardContent></Card>
-                    <Card><CardContent className="p-6"><Skeleton className="h-24 w-full" /></CardContent></Card>
-                    <Card><CardContent className="p-6"><Skeleton className="h-24 w-full" /></CardContent></Card>
+                    <Skeleton className="h-80 w-full rounded-2xl" />
+                    <Skeleton className="h-32 w-full rounded-2xl" />
+                    <Skeleton className="h-32 w-full rounded-2xl" />
                 </div>
             </div>
         ) : weatherData ? (
-            <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 transition-opacity duration-300 ${isPending ? 'opacity-50' : 'opacity-100'}`}>
-                <div className="lg:col-span-2 space-y-8">
+            <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 transition-opacity duration-500 ${isPending ? 'opacity-30' : 'opacity-100'}`}>
+                <div className="lg:col-span-2 space-y-8 animate-in fade-in-0 slide-in-from-bottom-10 duration-500">
                     <CurrentWeather weatherData={weatherData} units={units} />
                     <HourlyForecast weatherData={weatherData} units={units} />
                 </div>
-                <div className="space-y-8">
+                <div className="space-y-8 animate-in fade-in-0 slide-in-from-bottom-10 duration-500 delay-200">
                     <CalendarView />
                     <HolidayDisplay weatherData={weatherData} />
                     <EventSuggestions weather={weatherData?.current ?? null} location={weatherData?.location ?? null} />
@@ -229,10 +222,10 @@ export default function Home() {
         )}
       </main>
       
-      <footer className="py-6 md:px-8 md:py-0 border-t">
+      <footer className="py-6 md:px-8 md:py-0 border-t border-white/10 mt-8">
         <div className="container flex flex-col items-center justify-center gap-4 md:h-24 md:flex-row">
           <p className="text-balance text-center text-sm leading-loose text-muted-foreground">
-            Built with Next.js, ShadCN/UI and Genkit.
+            Built with Next.js, ShadCN/UI and Genkit. Designed with a funky vibe.
           </p>
         </div>
       </footer>
