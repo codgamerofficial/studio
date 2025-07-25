@@ -18,7 +18,8 @@ export async function GET() {
 
     if (!newsRes.ok) {
         const errorData = await newsRes.json();
-        return NextResponse.json({ error: errorData.message || 'Failed to fetch news data' }, { status: newsRes.status });
+        // NewsAPI error format is { status, code, message }
+        return NextResponse.json({ error: errorData.message || 'Failed to fetch news data from source' }, { status: newsRes.status });
     }
 
     const newsData = await newsRes.json();

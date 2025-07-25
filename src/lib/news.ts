@@ -21,17 +21,23 @@ export interface NewsResponse {
   message?: string;
 }
 
+interface ErrorResponse {
+    error: string;
+}
+
 export const getNews = async (): Promise<{ articles: Article[], error: string | null }> => {
   try {
     const response = await fetch('/api/news');
-    const data: NewsResponse = await response.json();
+    const data = await response.json();
     
     if (!response.ok) {
-      console.error("Error fetching news:", data.message);
-      return { articles: [], error: data.message || 'Failed to fetch news data.' };
+      const errorData = data as ErrorResponse;
+      console.error("Error fetching news:", errorData.error);
+      return { articles: [], error: errorData.error || 'Failed to fetch news data.' };
     }
     
-    return { articles: data.articles || [], error: null };
+    const newsData = data as NewsResponse;
+    return { articles: newsData.articles || [], error: null };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error("Failed to fetch or parse news data:", message);
