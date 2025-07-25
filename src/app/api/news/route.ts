@@ -15,20 +15,22 @@ export async function GET() {
   
   try {
     const newsRes = await fetch(newsUrl);
+    const newsData = await newsRes.json();
 
     if (!newsRes.ok) {
-        const errorData = await newsRes.json();
         // NewsAPI error format is { status, code, message }
-        return NextResponse.json({ error: errorData.message || 'Failed to fetch news data from source' }, { status: newsRes.status });
+        const errorMessage = newsData.message || 'Failed to fetch news data from source';
+        console.error("NewsAPI Error:", errorMessage);
+        return NextResponse.json({ error: errorMessage }, { status: newsRes.status });
     }
 
-    const newsData = await newsRes.json();
     return NextResponse.json(newsData);
   } catch (error) {
     let message = 'Failed to fetch news data.';
     if (error instanceof Error) {
         message = error.message;
     }
+    console.error("Internal Server Error:", message);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
