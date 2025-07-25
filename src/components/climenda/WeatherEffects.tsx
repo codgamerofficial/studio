@@ -79,7 +79,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
     if (!isClient) return null;
 
     return (
-        <div key={key} className="fixed top-0 left-0 w-full h-[50vh] pointer-events-none z-50 overflow-hidden bg-gradient-to-b from-primary/10 to-transparent">
+        <div key={key} className="fixed top-0 left-0 w-full h-[50vh] pointer-events-none z-50 overflow-hidden sky-background">
             {isCloudy && <Clouds />}
             {isRaining && <Rain />}
             {isThundering && <Thunderstorm />}
@@ -126,15 +126,19 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                 #clouds{
                     padding: 50px 0;
                     z-index: -1;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
                 }
 
                 .cloud {
                     width: 200px; height: 60px;
                     background: #fff;
                     border-radius: 200px;
-                    -moz-border-radius: 200px;
-                    -webkit-border-radius: 200px;
                     position: relative; 
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
                 }
 
                 .cloud:before, .cloud:after {
@@ -142,13 +146,9 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                     position: absolute; 
                     background: #fff;
                     width: 100px; height: 80px;
-                    position: absolute; top: -15px; left: 10px;
+                    top: -15px; left: 10px;
                     border-radius: 100px;
-                    -moz-border-radius: 100px;
-                    -webkit-border-radius: 100px;
-                    -webkit-transform: rotate(30deg);
                     transform: rotate(30deg);
-                    -moz-transform: rotate(30deg);
                 }
 
                 .cloud:after {
@@ -157,65 +157,39 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                 }
                 
                 .x1 {
-                    -webkit-animation: moveclouds 15s linear infinite;
-                    -moz-animation: moveclouds 15s linear infinite;
-                    -o-animation: moveclouds 15s linear infinite;
-                     opacity: 0.3;
+                    animation: moveclouds 15s linear infinite;
+                    opacity: 0.3;
                 }
 
                 .x2 {
                     left: 200px;
-                    -webkit-transform: scale(0.6);
-                    -moz-transform: scale(0.6);
                     transform: scale(0.6);
                     opacity: 0.6; 
-                    -webkit-animation: moveclouds 25s linear infinite;
-                    -moz-animation: moveclouds 25s linear infinite;
-                    -o-animation: moveclouds 25s linear infinite;
+                    animation: moveclouds 25s linear infinite;
                 }
 
                 .x3 {
                     left: -250px; top: -200px;
-                    -webkit-transform: scale(0.8);
-                    -moz-transform: scale(0.8);
                     transform: scale(0.8);
                     opacity: 0.8; 
-                    -webkit-animation: moveclouds 20s linear infinite;
-                    -moz-animation: moveclouds 20s linear infinite;
-                    -o-animation: moveclouds 20s linear infinite;
+                    animation: moveclouds 20s linear infinite;
                 }
                 
                 .x4 {
                     left: 470px; top: -250px;
-                    -webkit-transform: scale(0.75);
-                    -moz-transform: scale(0.75);
                     transform: scale(0.75);
                     opacity: 0.75;
-                    -webkit-animation: moveclouds 18s linear infinite;
-                    -moz-animation: moveclouds 18s linear infinite;
-                    -o-animation: moveclouds 18s linear infinite;
+                    animation: moveclouds 18s linear infinite;
                 }
 
                 .x5 {
                     left: -150px; top: -150px;
-                    -webkit-transform: scale(0.8);
-                    -moz-transform: scale(0.8);
                     transform: scale(0.8);
                     opacity: 0.8; 
-                    -webkit-animation: moveclouds 20s linear infinite;
-                    -moz-animation: moveclouds 20s linear infinite;
-                    -o-animation: moveclouds 20s linear infinite;
+                    animation: moveclouds 20s linear infinite;
                 }
 
-                @-webkit-keyframes moveclouds {
-                    0% {margin-left: 1000px;}
-                    100% {margin-left: -1000px;}
-                }
-                @-moz-keyframes moveclouds {
-                    0% {margin-left: 1000px;}
-                    100% {margin-left: -1000px;}
-                }
-                @-o-keyframes moveclouds {
+                @keyframes moveclouds {
                     0% {margin-left: 1000px;}
                     100% {margin-left: -1000px;}
                 }
@@ -234,6 +208,17 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                     border-radius: 50%;
                     animation: blow ease-in-out infinite;
                     will-change: transform;
+                }
+
+                @keyframes animate-sky {
+                    0% { background-position: 0% 0%; }
+                    100% { background-position: 100% 100%; }
+                }
+
+                .sky-background {
+                    background: linear-gradient(45deg, hsl(var(--primary)/0.1), hsl(var(--accent)/0.1), hsl(var(--primary)/0.1));
+                    background-size: 400% 400%;
+                    animation: animate-sky 30s ease-in-out infinite;
                 }
             `}</style>
         </div>
