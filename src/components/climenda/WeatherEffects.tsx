@@ -6,8 +6,8 @@ import React, { useEffect, useState, useMemo } from 'react';
 const Rain = React.memo(() => {
     const raindrops = useMemo(() => Array.from({ length: 150 }).map((_, i) => {
         const style = {
-          left: `${Math.random() * 110 - 5}%`, // Allow rain to go slightly off-screen
-          top: `${Math.random() * -50}%`, // Start raindrops above the view
+          left: `${Math.random() * 110 - 5}%`,
+          top: `${Math.random() * -50}%`,
           animationDuration: `${0.6 + Math.random() * 0.4}s`,
           animationDelay: `${Math.random() * 5}s`,
         };
@@ -26,7 +26,7 @@ Thunderstorm.displayName = 'Thunderstorm';
 const Wind = React.memo(() => {
     const particles = useMemo(() => Array.from({ length: 25 }).map((_, i) => {
         const style = {
-            left: `${-10 + Math.random() * -50}%`, // Start off-screen to the left
+            left: `${-10 + Math.random() * -50}%`,
             top: `${Math.random() * 100}%`,
             animationDuration: `${1 + Math.random() * 2}s`,
             animationDelay: `${Math.random() * 4}s`,
@@ -42,14 +42,17 @@ Wind.displayName = 'Wind';
 
 const Clouds = React.memo(() => {
     return (
-        <div className="clouds-container">
-            <div className="cloud-layer cloud-layer-1"></div>
-            <div className="cloud-layer cloud-layer-2"></div>
-            <div className="cloud-layer cloud-layer-3"></div>
+        <div id="clouds">
+            <div className="cloud x1"></div>
+            <div className="cloud x2"></div>
+            <div className="cloud x3"></div>
+            <div className="cloud x4"></div>
+            <div className="cloud x5"></div>
         </div>
     );
 });
 Clouds.displayName = 'Clouds';
+
 
 interface WeatherEffectsProps {
     condition: string;
@@ -119,57 +122,103 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                     animation: flash 5s infinite;
                     will-change: opacity;
                 }
+                
+                #clouds{
+                    padding: 50px 0;
+                    z-index: -1;
+                }
 
-                @keyframes drift {
-                    from {
-                        transform: translateX(-100%);
-                    }
-                    to {
-                        transform: translateX(100%);
-                    }
+                .cloud {
+                    width: 200px; height: 60px;
+                    background: #fff;
+                    border-radius: 200px;
+                    -moz-border-radius: 200px;
+                    -webkit-border-radius: 200px;
+                    position: relative; 
+                }
+
+                .cloud:before, .cloud:after {
+                    content: '';
+                    position: absolute; 
+                    background: #fff;
+                    width: 100px; height: 80px;
+                    position: absolute; top: -15px; left: 10px;
+                    border-radius: 100px;
+                    -moz-border-radius: 100px;
+                    -webkit-border-radius: 100px;
+                    -webkit-transform: rotate(30deg);
+                    transform: rotate(30deg);
+                    -moz-transform: rotate(30deg);
+                }
+
+                .cloud:after {
+                    width: 120px; height: 120px;
+                    top: -55px; left: auto; right: 15px;
                 }
                 
-                .clouds-container {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
+                .x1 {
+                    -webkit-animation: moveclouds 15s linear infinite;
+                    -moz-animation: moveclouds 15s linear infinite;
+                    -o-animation: moveclouds 15s linear infinite;
+                     opacity: 0.3;
                 }
 
-                .cloud-layer {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 200%;
-                    height: 100%;
-                    background-repeat: repeat-x;
-                    animation: drift linear infinite;
-                    will-change: transform;
+                .x2 {
+                    left: 200px;
+                    -webkit-transform: scale(0.6);
+                    -moz-transform: scale(0.6);
+                    transform: scale(0.6);
+                    opacity: 0.6; 
+                    -webkit-animation: moveclouds 25s linear infinite;
+                    -moz-animation: moveclouds 25s linear infinite;
+                    -o-animation: moveclouds 25s linear infinite;
                 }
 
-                .cloud-layer-1 {
-                    background-image: url('https://i.postimg.cc/qR4g0pNH/clouds-1.png');
-                    animation-duration: 60s;
-                    opacity: 0.3;
-                    filter: blur(2px);
-                }
-
-                .cloud-layer-2 {
-                    background-image: url('https://i.postimg.cc/PqV8H2tX/clouds-2.png');
-                    animation-duration: 90s;
-                    animation-direction: reverse;
-                    opacity: 0.2;
-                    filter: blur(4px);
+                .x3 {
+                    left: -250px; top: -200px;
+                    -webkit-transform: scale(0.8);
+                    -moz-transform: scale(0.8);
+                    transform: scale(0.8);
+                    opacity: 0.8; 
+                    -webkit-animation: moveclouds 20s linear infinite;
+                    -moz-animation: moveclouds 20s linear infinite;
+                    -o-animation: moveclouds 20s linear infinite;
                 }
                 
-                .cloud-layer-3 {
-                    background-image: url('https://i.postimg.cc/44rZdZtW/clouds-3.png');
-                    animation-duration: 120s;
-                    opacity: 0.15;
-                    filter: blur(6px);
+                .x4 {
+                    left: 470px; top: -250px;
+                    -webkit-transform: scale(0.75);
+                    -moz-transform: scale(0.75);
+                    transform: scale(0.75);
+                    opacity: 0.75;
+                    -webkit-animation: moveclouds 18s linear infinite;
+                    -moz-animation: moveclouds 18s linear infinite;
+                    -o-animation: moveclouds 18s linear infinite;
                 }
 
+                .x5 {
+                    left: -150px; top: -150px;
+                    -webkit-transform: scale(0.8);
+                    -moz-transform: scale(0.8);
+                    transform: scale(0.8);
+                    opacity: 0.8; 
+                    -webkit-animation: moveclouds 20s linear infinite;
+                    -moz-animation: moveclouds 20s linear infinite;
+                    -o-animation: moveclouds 20s linear infinite;
+                }
+
+                @-webkit-keyframes moveclouds {
+                    0% {margin-left: 1000px;}
+                    100% {margin-left: -1000px;}
+                }
+                @-moz-keyframes moveclouds {
+                    0% {margin-left: 1000px;}
+                    100% {margin-left: -1000px;}
+                }
+                @-o-keyframes moveclouds {
+                    0% {margin-left: 1000px;}
+                    100% {margin-left: -1000px;}
+                }
 
                 @keyframes blow {
                     to {
