@@ -2,15 +2,12 @@
 // NEWS_API_KEY="YOUR_API_KEY"
 
 import { NextResponse } from 'next/server';
-import { config } from 'dotenv';
-
-config();
 
 export async function GET() {
   const apiKey = process.env.NEWS_API_KEY;
 
   if (!apiKey) {
-    return NextResponse.json({ error: 'News API key is not configured.' }, { status: 500 });
+    return NextResponse.json({ error: 'The NEWS_API_KEY environment variable is not set. Please add it to your .env file.' }, { status: 500 });
   }
   
   // Fetches top headlines from the US. You can change this to other countries.

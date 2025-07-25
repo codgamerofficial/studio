@@ -2,9 +2,6 @@
 // WEATHER_API_KEY="YOUR_API_KEY"
 
 import { NextResponse } from 'next/server';
-import { config } from 'dotenv';
-
-config();
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -12,7 +9,7 @@ export async function GET(request: Request) {
   const apiKey = process.env.WEATHER_API_KEY;
 
   if (!apiKey) {
-    return NextResponse.json({ error: 'Weather API key is not configured.' }, { status: 500 });
+    return NextResponse.json({ error: 'The WEATHER_API_KEY environment variable is not set. Please add it to your .env file.' }, { status: 500 });
   }
 
   if (!location) {
