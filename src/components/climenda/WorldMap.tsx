@@ -6,19 +6,21 @@ import {
   Geographies,
   Geography,
   Marker,
-  ZoomableGroup
+  ZoomableGroup,
+  Annotation
 } from 'react-simple-maps';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Globe } from 'lucide-react';
-
-const geoUrl =
-  'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
+import { LocationInfo } from '@/lib/weather';
 
 interface WorldMapProps {
-  coordinates: [number, number];
+  location: LocationInfo;
 }
 
-export function WorldMap({ coordinates }: WorldMapProps) {
+export function WorldMap({ location }: WorldMapProps) {
+  const coordinates: [number, number] = [location.lon, location.lat];
+  const locationName = `${location.name}, ${location.region}, ${location.country}`;
+  
   return (
     <Card className="bg-card/80 backdrop-blur-sm">
         <CardHeader className="flex flex-row items-center justify-between py-3 px-4">
@@ -37,7 +39,7 @@ export function WorldMap({ coordinates }: WorldMapProps) {
           style={{ width: '100%', height: '100%' }}
         >
           <ZoomableGroup center={coordinates} zoom={8}>
-            <Geographies geography={geoUrl}>
+            <Geographies geography={'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'}>
               {({ geographies }) =>
                 geographies.map((geo) => (
                   <Geography
@@ -58,6 +60,20 @@ export function WorldMap({ coordinates }: WorldMapProps) {
             <Marker coordinates={coordinates}>
               <circle r={2} fill="hsl(var(--primary))" stroke="#fff" strokeWidth={0.5} />
             </Marker>
+            <Annotation
+              subject={coordinates}
+              dx={-90}
+              dy={-30}
+              connectorProps={{
+                stroke: "hsl(var(--foreground))",
+                strokeWidth: 1,
+                strokeLinecap: "round"
+              }}
+            >
+              <text x="-8" textAnchor="end" alignmentBaseline="middle" fill="hsl(var(--foreground))" className="text-xs font-bold">
+                {locationName}
+              </text>
+            </Annotation>
           </ZoomableGroup>
         </ComposableMap>
       </CardContent>

@@ -55,6 +55,7 @@ export interface CurrentWeather {
 
 export interface LocationInfo {
     name: string;
+    region: string;
     country: string;
     localtime: string;
     tz_id: string;

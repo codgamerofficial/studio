@@ -253,7 +253,7 @@ export default function Home() {
                 <div className="space-y-8 animate-fade-in-up" style={{animationDelay: '200ms'}}>
                     <Clock location={weatherData?.location} />
                     <TimeTools />
-                    <WorldMap coordinates={[weatherData.location.lon, weatherData.location.lat]} />
+                    <WorldMap location={weatherData.location} />
                     <HolidayDisplay weatherData={weatherData} />
                     <CalendarView
                       initialDate={weatherData?.location.localtime ? new Date(weatherData.location.localtime) : new Date()}
