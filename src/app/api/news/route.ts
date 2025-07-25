@@ -2,6 +2,9 @@
 // NEWS_API_KEY="YOUR_API_KEY"
 
 import { NextResponse } from 'next/server';
+import { config } from 'dotenv';
+
+config();
 
 export async function GET() {
   const apiKey = process.env.NEWS_API_KEY;
