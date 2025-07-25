@@ -1,3 +1,4 @@
+
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -36,7 +37,7 @@ export function CurrentWeather({ weatherData, units }: CurrentWeatherProps) {
     )
   }
 
-  const { current, locationName, forecastAstro } = weatherData;
+  const { current, location, locationName, forecastAstro } = weatherData;
   const temp = units.temp === 'C' ? current.temp_c : current.temp_f;
   const feelsLike = units.temp === 'C' ? current.feelslike_c : current.feelslike_f;
   const speed = units.speed === 'kmh' ? current.wind_kph : current.wind_mph;
@@ -45,6 +46,16 @@ export function CurrentWeather({ weatherData, units }: CurrentWeatherProps) {
   const astro = forecastAstro;
   const aqiIndex = current.air_quality ? current.air_quality['us-epa-index'] : undefined;
   const aqiInfo = aqiIndex ? getAqiInfo(aqiIndex) : getAqiInfo(0);
+  
+  const formattedDateTime = new Date(location.localtime).toLocaleString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true
+  });
 
 
   return (
@@ -53,7 +64,7 @@ export function CurrentWeather({ weatherData, units }: CurrentWeatherProps) {
         <div className="flex justify-between items-start">
             <div>
                 <CardTitle className="text-3xl font-bold tracking-tighter">{locationName}</CardTitle>
-                <CardDescription className="text-lg">What it feels like right now.</CardDescription>
+                <CardDescription className="text-sm text-muted-foreground">{formattedDateTime}</CardDescription>
             </div>
             {aqiIndex && (
                  <div title={`Air Quality Index: ${aqiInfo.text}`} className={cn("flex items-center gap-2 text-sm font-medium px-3 py-1 rounded-full", aqiInfo.bgColor, aqiInfo.color)}>
