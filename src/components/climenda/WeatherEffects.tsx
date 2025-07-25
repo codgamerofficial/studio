@@ -4,10 +4,6 @@
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 
-interface WeatherEffectsProps {
-    condition: string;
-}
-
 const Rain = () => (
     <div className="absolute top-0 left-0 w-full h-1/2 overflow-hidden pointer-events-none z-10">
         {Array.from({ length: 150 }).map((_, i) => (
@@ -41,24 +37,35 @@ const Rain = () => (
     </div>
 );
 
-const Thunder = () => (
-    <>
-        <div className="absolute top-0 left-0 w-full h-1/2 bg-black opacity-0 animate-lightning-bg pointer-events-none z-20" />
-        <style jsx>{`
-            @keyframes lightning-bg {
-                0%, 100% { opacity: 0; }
-                2% { opacity: 0.3; }
-                5% { opacity: 0; }
-                7% { opacity: 0.2; }
-                15% { opacity: 0; }
-            }
-            .animate-lightning-bg {
-                animation: lightning-bg 9s linear infinite;
-                animation-delay: 3s;
-            }
-        `}</style>
-    </>
-);
+const Thunder = () => {
+    const audioRef = React.useRef<HTMLAudioElement>(null);
+
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.play().catch(e => console.error("Audio play failed:", e));
+        }
+    }, []);
+
+    return (
+        <>
+            <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 animate-lightning-bg pointer-events-none z-20" />
+            <audio ref={audioRef} src="https://www.soundjay.com/nature/sounds/thunder-2.mp3" loop autoPlay preload="auto" />
+            <style jsx>{`
+                @keyframes lightning-bg {
+                    0%, 100% { opacity: 0; }
+                    2% { opacity: 0.3; }
+                    5% { opacity: 0; }
+                    7% { opacity: 0.2; }
+                    15% { opacity: 0; }
+                }
+                .animate-lightning-bg {
+                    animation: lightning-bg 9s linear infinite;
+                    animation-delay: 3s;
+                }
+            `}</style>
+        </>
+    );
+};
 
 const Clouds = () => (
     <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
@@ -120,6 +127,44 @@ const Clouds = () => (
     </div>
 );
 
+
+const Wind = () => (
+    <div className="absolute top-0 left-0 w-full h-1/2 overflow-hidden pointer-events-none z-10">
+        {Array.from({ length: 50 }).map((_, i) => (
+            <div
+                key={i}
+                className="absolute bg-white/20 rounded-full animate-wind"
+                style={{
+                    left: `${-10 + Math.random() * -20}%`,
+                    top: `${Math.random() * 100}%`,
+                    width: `${5 + Math.random() * 10}px`,
+                    height: `${1 + Math.random() * 2}px`,
+                    animationDelay: `${Math.random() * 5}s`,
+                    animationDuration: `${2 + Math.random() * 3}s`,
+                }}
+            />
+        ))}
+        <style jsx>{`
+            @keyframes wind {
+                from {
+                    transform: translateX(0) scaleX(1);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(120vw) scaleX(2.5);
+                    opacity: 0;
+                }
+            }
+            .animate-wind {
+                animation-name: wind;
+                animation-timing-function: ease-in;
+                animation-iteration-count: infinite;
+            }
+        `}</style>
+    </div>
+);
+
+
 export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const [isClient, setIsClient] = useState(false);
     const [key, setKey] = useState(0);
@@ -138,11 +183,13 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const isRainy = lowerCaseCondition.includes('rain') || lowerCaseCondition.includes('drizzle');
     const isStormy = lowerCaseCondition.includes('thunder') || lowerCaseCondition.includes('storm');
     const isCloudy = lowerCaseCondition.includes('cloudy') || lowerCaseCondition.includes('overcast') || isRainy || isStormy;
+    const isWindy = lowerCaseCondition.includes('windy') || lowerCaseCondition.includes('blustery');
 
     return (
         <div key={key} className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-blue-300/30 via-slate-600/20 to-gray-900/10 animate-sky-mood"></div>
             {isCloudy && <Clouds />}
+            {isWindy && <Wind />}
             {isRainy && <Rain />}
             {isStormy && <Thunder />}
 
