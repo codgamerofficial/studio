@@ -59,7 +59,7 @@ interface WeatherEffectsProps {
 export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const [isClient, setIsClient] = useState(false);
     const [key, setKey] = useState(0);
-    const [isMuted, setIsMuted] = useState(true);
+    const [isMuted, setIsMuted] = useState(false);
     const rainAudioRef = useRef<HTMLAudioElement>(null);
     const thunderAudioRef = useRef<HTMLAudioElement>(null);
     const windAudioRef = useRef<HTMLAudioElement>(null);
@@ -81,11 +81,14 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
 
     const playAudio = useCallback((ref: React.RefObject<HTMLAudioElement>) => {
         if (ref.current) {
+            ref.current.muted = isMuted;
             ref.current.play().catch(error => {
                 console.warn("Audio autoplay was prevented. Please interact with the page to enable sound.");
+                // If autoplay fails, mute the sounds to respect browser policy
+                setIsMuted(true);
             });
         }
-    }, []);
+    }, [isMuted]);
     
     const pauseAudio = useCallback((ref: React.RefObject<HTMLAudioElement>) => {
         if (ref.current) {
@@ -99,14 +102,14 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
             clearTimeout(thunderTimeoutRef.current);
         }
         const play = () => {
-            if (thunderAudioRef.current) {
+            if (thunderAudioRef.current && !isMuted) {
                 playAudio(thunderAudioRef);
             }
             const delay = 5000 + Math.random() * 10000; // Random delay between 5 and 15 seconds
             thunderTimeoutRef.current = setTimeout(play, delay);
         };
         play();
-    }, [playAudio]);
+    }, [playAudio, isMuted]);
 
 
     useEffect(() => {
@@ -137,27 +140,23 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
         }
 
     }, [isRaining, isThundering, isWindy, isClient, playAudio, pauseAudio, scheduleThunder]);
-
-    const handleUnmute = () => {
-        setIsMuted(false);
-        if (rainAudioRef.current) rainAudioRef.current.muted = false;
-        if (thunderAudioRef.current) thunderAudioRef.current.muted = false;
-        if (windAudioRef.current) windAudioRef.current.muted = false;
-
-        if (isRaining) playAudio(rainAudioRef);
-        if (isWindy) playAudio(windAudioRef);
-        if (isThundering) {
-            // Restart the scheduled thunder to play immediately on unmute
-            scheduleThunder();
-        }
-    }
     
-    const handleMute = () => {
-        setIsMuted(true);
-        if (rainAudioRef.current) rainAudioRef.current.muted = true;
-        if (thunderAudioRef.current) thunderAudioRef.current.muted = true;
-        if (windAudioRef.current) windAudioRef.current.muted = true;
-    }
+    useEffect(() => {
+        if (rainAudioRef.current) rainAudioRef.current.muted = isMuted;
+        if (thunderAudioRef.current) thunderAudioRef.current.muted = isMuted;
+        if (windAudioRef.current) windAudioRef.current.muted = isMuted;
+
+        if(!isMuted) {
+            if (isRaining) playAudio(rainAudioRef);
+            if (isWindy) playAudio(windAudioRef);
+            if (isThundering) scheduleThunder();
+        } else {
+            pauseAudio(rainAudioRef);
+            pauseAudio(windAudioRef);
+            if (thunderTimeoutRef.current) clearTimeout(thunderTimeoutRef.current);
+            pauseAudio(thunderAudioRef);
+        }
+    }, [isMuted, isRaining, isWindy, isThundering, playAudio, pauseAudio, scheduleThunder]);
 
 
     if (!isClient) return null;
@@ -171,19 +170,19 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
             {isRaining && <Rain />}
             {isThundering && <Thunderstorm />}
             
-            <audio ref={rainAudioRef} src="https://www.soundjay.com/nature/rain-07.mp3" loop muted preload="auto"></audio>
-            <audio ref={thunderAudioRef} src="https://www.soundjay.com/nature/thunder-01.mp3" muted preload="auto"></audio>
-            <audio ref={windAudioRef} src="https://www.soundjay.com/nature/wind-howl-01.mp3" loop muted preload="auto"></audio>
+            <audio ref={rainAudioRef} src="https://www.soundjay.com/nature/rain-07.mp3" loop muted={isMuted} preload="auto"></audio>
+            <audio ref={thunderAudioRef} src="https://www.soundjay.com/nature/thunder-01.mp3" muted={isMuted} preload="auto"></audio>
+            <audio ref={windAudioRef} src="https://www.soundjay.com/nature/wind-howl-01.mp3" loop muted={isMuted} preload="auto"></audio>
 
             {showEffects && (
                 <div className="fixed bottom-5 right-5 pointer-events-auto">
                     {isMuted ? (
-                        <Button onClick={handleUnmute} variant="outline" size="icon" className="rounded-full bg-background/50 backdrop-blur-sm">
+                        <Button onClick={() => setIsMuted(false)} variant="outline" size="icon" className="rounded-full bg-background/50 backdrop-blur-sm">
                             <VolumeX className="w-5 h-5" />
                             <span className="sr-only">Unmute</span>
                         </Button>
                     ) : (
-                        <Button onClick={handleMute} variant="outline" size="icon" className="rounded-full bg-background/50 backdrop-blur-sm">
+                        <Button onClick={() => setIsMuted(true)} variant="outline" size="icon" className="rounded-full bg-background/50 backdrop-blur-sm">
                             <Volume2 className="w-5 h-5" />
                              <span className="sr-only">Mute</span>
                         </Button>
@@ -373,4 +372,5 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
     );
 
     
+
 
