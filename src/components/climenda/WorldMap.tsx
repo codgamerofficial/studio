@@ -19,7 +19,7 @@ interface WorldMapProps {
 
 export function WorldMap({ location }: WorldMapProps) {
   const coordinates: [number, number] = [location.lon, location.lat];
-  const locationName = `${location.name}, ${location.region}, ${location.country}`;
+  const locationName = `${location.name}, ${location.region}`;
   
   return (
     <Card className="bg-card/80 backdrop-blur-sm">
@@ -41,20 +41,23 @@ export function WorldMap({ location }: WorldMapProps) {
           <ZoomableGroup center={coordinates} zoom={8}>
             <Geographies geography={'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'}>
               {({ geographies }) =>
-                geographies.map((geo) => (
-                  <Geography
-                    key={geo.rsmKey}
-                    geography={geo}
-                    fill="hsl(var(--muted))"
-                    stroke="hsl(var(--background))"
-                    strokeWidth={0.2}
-                    style={{
-                      default: { outline: 'none' },
-                      hover: { fill: 'hsl(var(--accent))', outline: 'none' },
-                      pressed: { fill: 'hsl(var(--primary))', outline: 'none' },
-                    }}
-                  />
-                ))
+                geographies.map((geo) => {
+                  const isSelectedCountry = geo.properties.name === location.country;
+                  return (
+                    <Geography
+                      key={geo.rsmKey}
+                      geography={geo}
+                      fill={isSelectedCountry ? "hsl(var(--accent))" : "hsl(var(--muted))"}
+                      stroke="hsl(var(--background))"
+                      strokeWidth={0.2}
+                      style={{
+                        default: { outline: 'none' },
+                        hover: { fill: isSelectedCountry ? "hsl(var(--accent))" : "hsl(var(--primary) / 0.5)", outline: 'none' },
+                        pressed: { fill: "hsl(var(--primary))", outline: 'none' },
+                      }}
+                    />
+                  )
+                })
               }
             </Geographies>
             <Marker coordinates={coordinates}>
@@ -62,7 +65,7 @@ export function WorldMap({ location }: WorldMapProps) {
             </Marker>
             <Annotation
               subject={coordinates}
-              dx={-90}
+              dx={-15}
               dy={-30}
               connectorProps={{
                 stroke: "hsl(var(--foreground))",
@@ -72,6 +75,9 @@ export function WorldMap({ location }: WorldMapProps) {
             >
               <text x="-8" textAnchor="end" alignmentBaseline="middle" fill="hsl(var(--foreground))" className="text-xs font-bold">
                 {locationName}
+              </text>
+              <text x="-8" textAnchor="end" alignmentBaseline="middle" fill="hsl(var(--foreground))" dy="12" className="text-xs">
+                {location.country}
               </text>
             </Annotation>
           </ZoomableGroup>
