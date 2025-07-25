@@ -35,6 +35,22 @@ const Clouds = React.memo(() => {
 });
 Clouds.displayName = 'Clouds';
 
+const Wind = React.memo(() => {
+    const particles = useMemo(() => Array.from({ length: 30 }).map((_, i) => {
+        const style = {
+            left: `${-10 + Math.random() * 10}%`,
+            top: `${Math.random() * 100}%`,
+            animationDuration: `${1 + Math.random() * 2}s`,
+            animationDelay: `${Math.random() * 3}s`,
+            transform: `scale(${Math.random() * 0.5 + 0.5})`,
+        };
+        return <div key={i} className="wind-particle" style={style} />;
+    }), []);
+  
+    return <div className="wind-container">{particles}</div>;
+});
+Wind.displayName = 'Wind';
+
 
 interface WeatherEffectsProps {
     condition: string;
@@ -46,6 +62,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const [isMuted, setIsMuted] = useState(true);
     const rainAudioRef = useRef<HTMLAudioElement>(null);
     const thunderAudioRef = useRef<HTMLAudioElement>(null);
+    const windAudioRef = useRef<HTMLAudioElement>(null);
     const thunderTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
@@ -60,6 +77,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const isThundering = lowerCaseCondition.includes('thunder') || lowerCaseCondition.includes('storm');
     const isRaining = lowerCaseCondition.includes('rain') || lowerCaseCondition.includes('drizzle') || isThundering;
     const isCloudy = isRaining || isThundering || lowerCaseCondition.includes('cloud') || lowerCaseCondition.includes('overcast') || lowerCaseCondition.includes('mist');
+    const isWindy = lowerCaseCondition.includes('wind');
 
     const playAudio = useCallback((ref: React.RefObject<HTMLAudioElement>) => {
         if (ref.current) {
@@ -107,18 +125,27 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
             pauseAudio(thunderAudioRef);
         }
 
+        if (isWindy) {
+            playAudio(windAudioRef);
+        } else {
+            pauseAudio(windAudioRef);
+        }
+
+
         return () => {
             if (thunderTimeoutRef.current) clearTimeout(thunderTimeoutRef.current);
         }
 
-    }, [isRaining, isThundering, isClient, playAudio, pauseAudio, scheduleThunder]);
+    }, [isRaining, isThundering, isWindy, isClient, playAudio, pauseAudio, scheduleThunder]);
 
     const handleUnmute = () => {
         setIsMuted(false);
         if (rainAudioRef.current) rainAudioRef.current.muted = false;
         if (thunderAudioRef.current) thunderAudioRef.current.muted = false;
+        if (windAudioRef.current) windAudioRef.current.muted = false;
 
         if (isRaining) playAudio(rainAudioRef);
+        if (isWindy) playAudio(windAudioRef);
         if (isThundering) {
             // Restart the scheduled thunder to play immediately on unmute
             scheduleThunder();
@@ -129,21 +156,24 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
         setIsMuted(true);
         if (rainAudioRef.current) rainAudioRef.current.muted = true;
         if (thunderAudioRef.current) thunderAudioRef.current.muted = true;
+        if (windAudioRef.current) windAudioRef.current.muted = true;
     }
 
 
     if (!isClient) return null;
 
-    const showEffects = isRaining || isThundering || isCloudy;
+    const showEffects = isRaining || isThundering || isCloudy || isWindy;
 
     return (
         <div key={key} className="fixed top-0 left-0 w-full h-1/2 pointer-events-none z-[9999] overflow-hidden">
+            {isWindy && <Wind />}
             {isCloudy && <Clouds />}
             {isRaining && <Rain />}
             {isThundering && <Thunderstorm />}
             
             <audio ref={rainAudioRef} src="https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg" loop muted preload="auto"></audio>
             <audio ref={thunderAudioRef} src="https://actions.google.com/sounds/v1/weather/thunder_crack.ogg" muted preload="auto"></audio>
+            <audio ref={windAudioRef} src="https://actions.google.com/sounds/v1/weather/wind_strong.ogg" loop muted preload="auto"></audio>
 
             {showEffects && (
                 <div className="fixed bottom-5 right-5 pointer-events-auto">
@@ -308,6 +338,34 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                     to {
                         transform: translateX(200%);
                     }
+                }
+
+                @keyframes blow {
+                    0% {
+                        transform: translateX(0) translateY(0) rotate(0deg);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translateX(100vw) translateY(var(--translate-y)) rotate(720deg);
+                        opacity: 0;
+                    }
+                }
+                .wind-container {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                }
+                .wind-particle {
+                    position: absolute;
+                    width: 10px;
+                    height: 6px;
+                    background-color: rgba(255, 255, 255, 0.2);
+                    border-radius: 50%;
+                    opacity: 0;
+                    animation: blow ease-in-out infinite;
+                    --translate-y: calc((var(--i) - 15) * 2vh);
                 }
 
             `}</style>
