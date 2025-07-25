@@ -43,9 +43,9 @@ Wind.displayName = 'Wind';
 const Clouds = React.memo(() => {
     return (
         <div className="clouds-container">
-            <div id="cloud1" className="cloud"></div>
-            <div id="cloud2" className="cloud"></div>
-            <div id="cloud3" className="cloud"></div>
+            <div className="cloud-layer cloud-layer-1"></div>
+            <div className="cloud-layer cloud-layer-2"></div>
+            <div className="cloud-layer cloud-layer-3"></div>
         </div>
     );
 });
@@ -71,7 +71,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const isThundering = lowerCaseCondition.includes('thunder');
     const isRaining = lowerCaseCondition.includes('rain') || lowerCaseCondition.includes('drizzle') || isThundering;
     const isCloudy = isRaining || isThundering || lowerCaseCondition.includes('cloud') || lowerCaseCondition.includes('overcast') || lowerCaseCondition.includes('mist');
-    const isWindy = lowerCaseCondition.includes('wind');
+    const isWindy = lowerCaseCondition.includes('windy');
     
     if (!isClient) return null;
 
@@ -84,17 +84,16 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
             <style jsx global>{`
                 @keyframes fall {
                     to {
-                        transform: translate(-30px, 110%);
+                        transform: translate(-30px, 110vh);
                     }
                 }
                 .raindrop {
                     position: absolute;
-                    width: 2px;
-                    height: 80px;
-                    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.4));
+                    width: 1.5px;
+                    height: 70px;
+                    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3));
                     animation: fall linear infinite;
                     transform-origin: top left;
-                    transform: translate(0, 0);
                     will-change: transform;
                 }
 
@@ -123,18 +122,10 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
 
                 @keyframes drift {
                     from {
-                        transform: translateX(-300px) scale(1);
-                        opacity: 0;
-                    }
-                    25% {
-                        opacity: 1;
-                    }
-                    75% {
-                        opacity: 1;
+                        transform: translateX(-100%);
                     }
                     to {
-                        transform: translateX(100vw) scale(1.1);
-                        opacity: 0;
+                        transform: translateX(100%);
                     }
                 }
                 
@@ -144,41 +135,41 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                     left: 0;
                     width: 100%;
                     height: 100%;
-                    filter: blur(5px);
                 }
 
-                .cloud {
+                .cloud-layer {
                     position: absolute;
-                    background: rgba(255, 255, 255, 0.15);
-                    border-radius: 50%;
-                    animation-name: drift;
-                    animation-timing-function: linear;
-                    animation-iteration-count: infinite;
-                    will-change: transform, opacity;
+                    top: 0;
+                    left: 0;
+                    width: 200%;
+                    height: 100%;
+                    background-repeat: repeat-x;
+                    animation: drift linear infinite;
+                    will-change: transform;
                 }
 
-                #cloud1 {
-                    width: 250px;
-                    height: 80px;
-                    top: 10%;
-                    animation-duration: 40s;
-                    animation-delay: -20s;
+                .cloud-layer-1 {
+                    background-image: url('https://i.postimg.cc/qR4g0pNH/clouds-1.png');
+                    animation-duration: 60s;
+                    opacity: 0.3;
+                    filter: blur(2px);
                 }
 
-                #cloud2 {
-                    width: 350px;
-                    height: 120px;
-                    top: 25%;
-                    animation-duration: 50s;
+                .cloud-layer-2 {
+                    background-image: url('https://i.postimg.cc/PqV8H2tX/clouds-2.png');
+                    animation-duration: 90s;
+                    animation-direction: reverse;
+                    opacity: 0.2;
+                    filter: blur(4px);
                 }
                 
-                #cloud3 {
-                    width: 300px;
-                    height: 100px;
-                    top: 40%;
-                    animation-duration: 45s;
-                    animation-delay: -15s;
+                .cloud-layer-3 {
+                    background-image: url('https://i.postimg.cc/44rZdZtW/clouds-3.png');
+                    animation-duration: 120s;
+                    opacity: 0.15;
+                    filter: blur(6px);
                 }
+
 
                 @keyframes blow {
                     to {
