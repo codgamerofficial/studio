@@ -8,7 +8,6 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { getNews, Article } from '@/lib/news'
 import { Newspaper, AlertTriangle } from 'lucide-react'
-import Image from 'next/image'
 
 export function NewsFeed() {
   const [articles, setArticles] = useState<Article[]>([])
@@ -74,13 +73,11 @@ export function NewsFeed() {
                     <div className="flex flex-col sm:flex-row gap-4">
                          {article.urlToImage ? (
                             <div className="relative w-full sm:w-32 h-32 sm:h-24 flex-shrink-0">
-                                <Image
+                                <img
                                     src={article.urlToImage}
                                     alt={article.title}
-                                    fill
-                                    data-ai-hint="news article"
-                                    className="rounded-lg object-cover"
-                                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                    className="rounded-lg object-cover w-full h-full"
+                                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                                 />
                             </div>
                         ) : (

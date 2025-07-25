@@ -1,21 +1,24 @@
-import type {NextConfig} from 'next';
+
+import { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  images: {
-    remotePatterns: [
+  async headers() {
+    return [
       {
-        protocol: 'https',
-        hostname: '**',
+        source: "/:path*",
+        headers: [
+          {
+            key: "Permissions-Policy",
+            value: "geolocation=*",
+          },
+        ],
       },
-    ],
+    ];
   },
+  experimental: {
+    // Other experimental features...
+  },
+  // Other Next.js configurations...
 };
 
 export default nextConfig;
