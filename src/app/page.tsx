@@ -24,6 +24,7 @@ import { DailyForecast } from '@/components/climenda/DailyForecast'
 import { WeatherEffects } from '@/components/climenda/WeatherEffects'
 import Link from 'next/link'
 import { HolidayDisplay } from '@/components/climenda/HolidayDisplay'
+import { ThemeSwitcher } from '@/components/climenda/ThemeSwitcher'
 
 
 const formSchema = z.object({
@@ -172,6 +173,7 @@ export default function Home() {
             <h1 className="text-3xl font-bold tracking-tighter">Climenda</h1>
           </div>
           <div className="flex items-center gap-4">
+            <ThemeSwitcher />
             <div ref={searchContainerRef} className="relative">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2 items-center">
@@ -270,7 +272,7 @@ export default function Home() {
         )}
       </main>
       
-      <footer className="py-6 md:px-8 md:py-0 border-t border-white/10 mt-8">
+      <footer className="py-6 md:px-8 md:py-0 border-t mt-8">
         <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
           <p className="text-balance text-center text-sm leading-loose text-muted-foreground">
             Built with Next.js, ShadCN/UI and Genkit. Designed with a funky vibe.

@@ -50,7 +50,7 @@ function Stopwatch() {
       </div>
       <div className="flex gap-4">
         {!isRunning ? (
-          <Button onClick={handleStart} size="lg" className="bg-green-500 hover:bg-green-600 text-white">
+          <Button onClick={handleStart} size="lg" className="bg-green-500 hover:bg-green-600 text-white dark:text-white">
             <Play className="mr-2 h-5 w-5" /> Start
           </Button>
         ) : (
@@ -177,15 +177,15 @@ function Timer() {
             )}
              <div className="flex gap-4">
                 { !isActive && !isPaused ? (
-                    <Button onClick={handleStart} size="lg" className="bg-green-500 hover:bg-green-600 text-white" disabled={totalDurationInSeconds === 0}>
+                    <Button onClick={handleStart} size="lg" className="bg-green-500 hover:bg-green-600 text-white dark:text-white" disabled={totalDurationInSeconds === 0}>
                         <Play className="mr-2 h-5 w-5" /> Start
                     </Button>
                 ) : isActive ? (
-                    <Button onClick={handlePause} size="lg" className="bg-yellow-500 hover:bg-yellow-600 text-white">
+                    <Button onClick={handlePause} size="lg" className="bg-yellow-500 hover:bg-yellow-600 text-white dark:text-white">
                         <Pause className="mr-2 h-5 w-5" /> Pause
                     </Button>
                 ) : (
-                     <Button onClick={handleResume} size="lg" className="bg-green-500 hover:bg-green-600 text-white">
+                     <Button onClick={handleResume} size="lg" className="bg-green-500 hover:bg-green-600 text-white dark:text-white">
                         <Play className="mr-2 h-5 w-5" /> Resume
                     </Button>
                 )}

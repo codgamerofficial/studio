@@ -13,7 +13,6 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { DayPicker, useDayPicker } from "react-day-picker";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 const eventFormSchema = z.object({
@@ -232,7 +231,10 @@ export function CalendarView({ initialDate, holidays, userEvents, onAddEvent }: 
             .holiday-date {
                 background-color: hsl(var(--destructive) / 0.2);
                 font-weight: bold;
-                color: hsl(var(--destructive));
+                color: hsl(var(--destructive) / 0.9);
+            }
+            :global(.dark) .holiday-date {
+                 color: hsl(var(--destructive));
             }
             .holiday-date:hover {
                 background-color: hsl(var(--destructive) / 0.3) !important;
@@ -246,5 +248,3 @@ export function CalendarView({ initialDate, holidays, userEvents, onAddEvent }: 
     </Card>
   )
 }
-
-    

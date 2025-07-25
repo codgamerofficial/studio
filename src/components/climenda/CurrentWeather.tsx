@@ -59,7 +59,7 @@ export function CurrentWeather({ weatherData, units }: CurrentWeatherProps) {
 
 
   return (
-    <Card className="w-full bg-gradient-to-br from-primary/20 via-card to-card shadow-2xl shadow-primary/10 border-primary/20">
+    <Card className="w-full bg-gradient-to-br from-primary/20 via-card to-card shadow-2xl dark:shadow-primary/10 border-primary/20">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
             <div>
