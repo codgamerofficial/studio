@@ -25,6 +25,7 @@ import { WeatherEffects } from '@/components/climenda/WeatherEffects'
 import Link from 'next/link'
 import { HolidayDisplay } from '@/components/climenda/HolidayDisplay'
 import { ThemeSwitcher } from '@/components/climenda/ThemeSwitcher'
+import { NewsFeed } from '@/components/climenda/NewsFeed'
 
 
 const formSchema = z.object({
@@ -249,6 +250,7 @@ export default function Home() {
                     <CurrentWeather weatherData={weatherData} units={units} />
                     <DailyForecast weatherData={weatherData} units={units} />
                     <HourlyForecast weatherData={weatherData} units={units} />
+                    <NewsFeed />
                 </div>
                 <div className="space-y-8 animate-fade-in-up" style={{animationDelay: '200ms'}}>
                     <Clock location={weatherData?.location} />
