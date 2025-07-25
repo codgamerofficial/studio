@@ -171,9 +171,9 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
             {isRaining && <Rain />}
             {isThundering && <Thunderstorm />}
             
-            <audio ref={rainAudioRef} src="https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg" loop muted preload="auto"></audio>
-            <audio ref={thunderAudioRef} src="https://actions.google.com/sounds/v1/weather/thunder_crack.ogg" muted preload="auto"></audio>
-            <audio ref={windAudioRef} src="https://actions.google.com/sounds/v1/weather/wind_strong.ogg" loop muted preload="auto"></audio>
+            <audio ref={rainAudioRef} src="https://www.soundjay.com/nature/rain-07.mp3" loop muted preload="auto"></audio>
+            <audio ref={thunderAudioRef} src="https://www.soundjay.com/nature/thunder-01.mp3" muted preload="auto"></audio>
+            <audio ref={windAudioRef} src="https://www.soundjay.com/nature/wind-howl-01.mp3" loop muted preload="auto"></audio>
 
             {showEffects && (
                 <div className="fixed bottom-5 right-5 pointer-events-auto">
@@ -373,3 +373,4 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
     );
 
     
+
