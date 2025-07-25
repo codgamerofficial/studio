@@ -345,7 +345,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                         opacity: 1;
                     }
                     100% {
-                        transform: translateX(100vw) translateY(var(--translate-y)) rotate(720deg);
+                        transform: translateX(100vw) translateY(calc( (50% - 50vh) * (sin(30deg)) )) rotate(720deg);
                         opacity: 0;
                     }
                 }
@@ -364,7 +364,6 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                     border-radius: 50%;
                     opacity: 0;
                     animation: blow ease-in-out infinite;
-                    --translate-y: calc((var(--i) - 15) * 2vh);
                 }
 
             `}</style>
@@ -375,3 +374,6 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
 
 
 
+
+
+    
