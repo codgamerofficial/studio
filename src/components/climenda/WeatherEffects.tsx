@@ -345,7 +345,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                         opacity: 1;
                     }
                     100% {
-                        transform: translateX(100vw) translateY(calc( (50% - 50vh) * (sin(30deg)) )) rotate(720deg);
+                        transform: translateX(100vw) translateY(calc( (50% - 50vh) * (0.5) )) rotate(720deg);
                         opacity: 0;
                     }
                 }
@@ -375,5 +375,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
 
 
 
+
+    
 
     
