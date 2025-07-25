@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
@@ -13,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { DayPicker, useDayPicker } from "react-day-picker";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 const eventFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -95,10 +97,17 @@ export function CalendarView({ initialDate, holidays, userEvents, onAddEvent }: 
     setToday(locationToday);
   }, [initialDate]);
   
-  const holidayDates = useMemo(() => holidays.map(h => {
-    const parts = h.date.split('-').map(p => parseInt(p, 10));
-    return new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
-  }), [holidays]);
+   const holidaysByDate = useMemo(() => {
+    const map = new Map<string, Holiday>();
+    holidays.forEach(h => {
+        // Normalize date to prevent timezone issues
+        const date = new Date(h.date + 'T00:00:00');
+        map.set(date.toDateString(), h);
+    });
+    return map;
+  }, [holidays]);
+
+  const holidayDates = useMemo(() => Array.from(holidaysByDate.keys()).map(d => new Date(d)), [holidaysByDate]);
 
   const userEventDates = useMemo(() => userEvents.map(e => e.date), [userEvents]);
 
@@ -143,55 +152,74 @@ export function CalendarView({ initialDate, holidays, userEvents, onAddEvent }: 
             </div>
         </CardHeader>
       <CardContent className="p-0">
-        <Calendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={setSelectedDate}
-          month={currentMonth}
-          onMonthChange={setCurrentMonth}
-          className="rounded-md"
-          showOutsideDays={true}
-          today={today}
-          modifiers={{
-            holiday: holidayDates,
-            userEvent: userEventDates,
-          }}
-          modifiersClassNames={{
-            holiday: 'holiday',
-            userEvent: 'user-event',
-          }}
-          classNames={{
-            day_today: "bg-accent/50 text-accent-foreground rounded-md",
-            cell: "relative",
-          }}
-          components={{
-            Caption: () => null, // Hide default caption
-            DayContent: (props) => {
-              const isHoliday = props.displayMonth.getMonth() === props.date.getMonth() && props.activeModifiers.holiday;
-              const hasUserEvent = props.displayMonth.getMonth() === props.date.getMonth() && props.activeModifiers.userEvent;
+        <TooltipProvider>
+            <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={setSelectedDate}
+            month={currentMonth}
+            onMonthChange={setCurrentMonth}
+            className="rounded-md"
+            showOutsideDays={true}
+            today={today}
+            modifiers={{
+                holiday: holidayDates,
+                userEvent: userEventDates,
+            }}
+            modifiersClassNames={{
+                holiday: 'holiday-date',
+                userEvent: 'user-event-date',
+            }}
+            classNames={{
+                day_today: "bg-accent/50 text-accent-foreground rounded-md",
+                cell: "relative",
+            }}
+            components={{
+                Caption: () => null, // Hide default caption
+                DayContent: (props) => {
+                const holidayInfo = holidaysByDate.get(props.date.toDateString());
+                const isHoliday = !!holidayInfo && props.displayMonth.getMonth() === props.date.getMonth();
+                const hasUserEvent = props.displayMonth.getMonth() === props.date.getMonth() && props.activeModifiers.userEvent;
 
-              return (
-                <AddEventDialog date={props.date} onAddEvent={onAddEvent}>
-                  <div className="relative w-full h-full flex items-center justify-center">
+                const dayContent = (
+                    <div className="relative w-full h-full flex items-center justify-center">
                     <span>{props.date.getDate()}</span>
-                    {isHoliday && (
-                      <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full bg-destructive"></span>
-                    )}
                     {hasUserEvent && (
-                       <span className="absolute bottom-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-blue-500"></span>
+                        <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full bg-chart-2"></span>
                     )}
-                  </div>
-                </AddEventDialog>
-              );
-            }
-          }}
-        />
+                    </div>
+                );
+
+                if (isHoliday) {
+                    return (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <AddEventDialog date={props.date} onAddEvent={onAddEvent}>
+                                    {dayContent}
+                                </AddEventDialog>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>{holidayInfo.name}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    );
+                }
+                
+                return (
+                    <AddEventDialog date={props.date} onAddEvent={onAddEvent}>
+                        {dayContent}
+                    </AddEventDialog>
+                );
+                }
+            }}
+            />
+        </TooltipProvider>
       </CardContent>
-       {selectedDate && (eventsForSelectedDay.length > 0 || holidays.find(h => new Date(h.date + 'T00:00:00').toDateString() === selectedDate.toDateString())) && (
+       {selectedDate && (eventsForSelectedDay.length > 0 || holidaysByDate.has(selectedDate.toDateString())) && (
          <CardContent className="p-4 border-t border-border/50">
            <h4 className="font-semibold mb-2 text-sm">Events for {selectedDate.toLocaleDateString()}</h4>
            <ul className="space-y-1 text-xs list-disc list-inside">
-             {holidays.filter(h => new Date(h.date + 'T00:00:00').toDateString() === selectedDate.toDateString()).map(h => (
+             {Array.from(holidaysByDate.values()).filter(h => new Date(h.date + 'T00:00:00').toDateString() === selectedDate.toDateString()).map(h => (
                 <li key={h.name} className="text-red-400">{h.name} (Holiday)</li>
              ))}
              {eventsForSelectedDay.map(event => (
@@ -200,6 +228,23 @@ export function CalendarView({ initialDate, holidays, userEvents, onAddEvent }: 
            </ul>
          </CardContent>
        )}
+        <style jsx global>{`
+            .holiday-date {
+                background-color: hsl(var(--destructive) / 0.2);
+                font-weight: bold;
+                color: hsl(var(--destructive));
+            }
+            .holiday-date:hover {
+                background-color: hsl(var(--destructive) / 0.3) !important;
+            }
+            .rdp-day_selected.holiday-date,
+            .rdp-day_selected.holiday-date:hover {
+                 background-color: hsl(var(--primary)) !important;
+                 color: hsl(var(--primary-foreground)) !important;
+            }
+        `}</style>
     </Card>
   )
 }
+
+    
