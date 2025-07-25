@@ -23,6 +23,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { DailyForecast } from '@/components/climenda/DailyForecast'
 import { WeatherEffects } from '@/components/climenda/WeatherEffects'
 import Link from 'next/link'
+import { HolidayDisplay } from '@/components/climenda/HolidayDisplay'
 
 
 const formSchema = z.object({
@@ -251,6 +252,7 @@ export default function Home() {
                     <Clock location={weatherData?.location} />
                     <TimeTools />
                     <WorldMap coordinates={[weatherData.location.lon, weatherData.location.lat]} />
+                    <HolidayDisplay weatherData={weatherData} />
                     <CalendarView
                       initialDate={weatherData?.location.localtime ? new Date(weatherData.location.localtime) : new Date()}
                       holidays={weatherData?.holidays || []}
