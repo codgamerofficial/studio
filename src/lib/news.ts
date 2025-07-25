@@ -1,3 +1,4 @@
+
 export interface Article {
   source: {
     id: string | null;
@@ -16,20 +17,24 @@ export interface NewsResponse {
   status: string;
   totalResults: number;
   articles: Article[];
+  code?: string;
+  message?: string;
 }
 
-export const getNews = async (): Promise<Article[]> => {
+export const getNews = async (): Promise<{ articles: Article[], error: string | null }> => {
   try {
     const response = await fetch('/api/news');
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Error fetching news:", errorData.error);
-      return [];
-    }
     const data: NewsResponse = await response.json();
-    return data.articles;
+    
+    if (!response.ok) {
+      console.error("Error fetching news:", data.message);
+      return { articles: [], error: data.message || 'Failed to fetch news data.' };
+    }
+    
+    return { articles: data.articles || [], error: null };
   } catch (error) {
-    console.error("Failed to fetch or parse news data:", error);
-    return [];
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Failed to fetch or parse news data:", message);
+    return { articles: [], error: message };
   }
 };

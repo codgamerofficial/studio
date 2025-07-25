@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -19,11 +20,16 @@ export function NewsFeed() {
       try {
         setLoading(true);
         setError(null);
-        const newsArticles = await getNews();
-        // NOTE: NewsAPI in developer mode may return articles with no title/description. Filter them out.
-        setArticles(newsArticles.filter(a => a.title && a.description));
+        const { articles: newsArticles, error: apiError } = await getNews();
+        if (apiError) {
+            setError(`Failed to load news feed: ${apiError}`);
+            setArticles([]);
+        } else {
+            // NOTE: NewsAPI in developer mode may return articles with missing fields. Filter out those without a title.
+            setArticles(newsArticles.filter(a => a.title && a.title !== '[Removed]'));
+        }
       } catch (err) {
-        setError("Failed to load news feed. Please check the API key and try again.")
+        setError("An unexpected error occurred while fetching the news feed.")
         console.error(err)
       } finally {
         setLoading(false)
@@ -63,7 +69,7 @@ export function NewsFeed() {
         ) : (
           <ScrollArea className="h-96 pr-4">
             <div className="space-y-6">
-              {articles.map((article, index) => (
+              {articles.length > 0 ? articles.map((article, index) => (
                 <a key={index} href={article.url} target="_blank" rel="noopener noreferrer" className="block hover:bg-muted/50 p-3 rounded-lg transition-colors duration-200 group">
                     <div className="flex flex-col sm:flex-row gap-4">
                          {article.urlToImage ? (
@@ -74,6 +80,7 @@ export function NewsFeed() {
                                     fill
                                     data-ai-hint="news article"
                                     className="rounded-lg object-cover"
+                                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
                                 />
                             </div>
                         ) : (
@@ -88,7 +95,13 @@ export function NewsFeed() {
                         </div>
                     </div>
                 </a>
-              ))}
+              )) : (
+                <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground py-10">
+                    <Newspaper className="w-16 h-16 mb-4" />
+                    <p className="text-lg font-medium">No news articles found.</p>
+                    <p className="text-sm">Please try again later.</p>
+                </div>
+              )}
             </div>
           </ScrollArea>
         )}
