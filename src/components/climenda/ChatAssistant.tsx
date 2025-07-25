@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useState, useRef, useEffect, useTransition } from 'react'
@@ -59,7 +60,7 @@ export function ChatAssistant({ weather, location }: ChatAssistantProps) {
       try {
         const chatInput: ChatInput = {
           message: messageToSend,
-          history: newMessages.slice(0, -1), // Pass history without the current message
+          history: messages, // Pass the history before adding the new message
           weather: weather ? JSON.stringify({ ...weather, location }) : undefined,
         };
         const result = await chat(chatInput);
