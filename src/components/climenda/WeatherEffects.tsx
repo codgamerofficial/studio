@@ -1,3 +1,4 @@
+
 'use client'
 
 import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
@@ -165,6 +166,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                 @keyframes fall {
                     to {
                         transform: translateY(50vh);
+                        opacity: 0;
                     }
                 }
                 .rain-container {
@@ -177,10 +179,11 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                 .raindrop {
                     position: absolute;
                     bottom: 100%;
-                    width: 1px;
-                    height: 60px;
-                    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.25));
+                    width: 1.5px;
+                    height: 80px;
+                    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3));
                     animation: fall linear infinite;
+                    transform: rotate(10deg);
                 }
 
                 @keyframes professional-flash {
@@ -201,7 +204,7 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                     height: 50vh;
                     background: radial-gradient(ellipse at center, #d0d5e0 0%,#a4a9b5 40%,#7a808f 100%);
                     opacity: 0;
-                    animation: professional-flash 5s linear infinite;
+                    animation: professional-flash 6s ease-in-out infinite;
                 }
 
                 .clouds-container {
@@ -214,10 +217,13 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
 
                 .cloud {
                     position: absolute;
-                    background: rgba(255, 255, 255, 0.1);
+                    background: rgba(255, 255, 255, 0.15);
                     border-radius: 50%;
-                    filter: blur(10px);
-                    opacity: 0.8;
+                    filter: blur(12px);
+                    opacity: 0;
+                    animation-name: drift;
+                    animation-timing-function: linear;
+                    animation-iteration-count: infinite;
                 }
 
                 .cloud::before, .cloud::after {
@@ -225,74 +231,87 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
                     position: absolute;
                     background: rgba(255, 255, 255, 0.1);
                     border-radius: 50%;
-                    filter: blur(5px);
                 }
 
                 .cloud1 {
-                    width: 200px;
-                    height: 60px;
-                    top: 10%;
-                    animation: drift 25s linear infinite reverse;
-                }
-
-                .cloud1::before {
-                    width: 120px;
-                    height: 80px;
-                    top: -40px;
-                    left: 40px;
-                }
-                 .cloud1::after {
-                    width: 100px;
-                    height: 60px;
-                    top: -30px;
-                    right: 30px;
-                }
-                
-                .cloud2 {
-                    width: 300px;
-                    height: 100px;
-                    top: 20%;
-                    animation: drift 35s linear infinite;
-                }
-
-                .cloud2::before {
-                    width: 180px;
-                    height: 120px;
-                    top: -60px;
-                    left: 60px;
-                }
-
-                .cloud2::after {
-                    width: 150px;
-                    height: 90px;
-                    top: -45px;
-                    right: 45px;
-                }
-
-                .cloud3 {
                     width: 250px;
                     height: 80px;
                     top: 5%;
-                    animation: drift 45s linear infinite reverse;
+                    animation-duration: 40s;
+                    animation-delay: -10s;
+                    animation-name: drift, fadeIn;
                 }
-                
-                .cloud3::before {
+
+                .cloud1::before {
                     width: 150px;
                     height: 100px;
                     top: -50px;
                     left: 50px;
                 }
+                 .cloud1::after {
+                    width: 120px;
+                    height: 70px;
+                    top: -35px;
+                    right: 40px;
+                }
+                
+                .cloud2 {
+                    width: 350px;
+                    height: 120px;
+                    top: 15%;
+                    animation-duration: 55s;
+                     animation-delay: -25s;
+                    animation-name: drift, fadeIn;
+                }
+
+                .cloud2::before {
+                    width: 200px;
+                    height: 140px;
+                    top: -70px;
+                    left: 70px;
+                }
+
+                .cloud2::after {
+                    width: 180px;
+                    height: 110px;
+                    top: -55px;
+                    right: 55px;
+                }
+
+                .cloud3 {
+                    width: 300px;
+                    height: 100px;
+                    top: 25%;
+                    animation-duration: 30s;
+                     animation-delay: 0s;
+                    animation-name: drift, fadeIn;
+                }
+                
+                .cloud3::before {
+                    width: 180px;
+                    height: 120px;
+                    top: -60px;
+                    left: 60px;
+                }
+                
+                @keyframes fadeIn {
+                    0% { opacity: 0; }
+                    10% { opacity: 0.9; }
+                    90% { opacity: 0.9; }
+                    100% { opacity: 0; }
+                }
 
                 @keyframes drift {
                     from {
-                        transform: translateX(-150%);
+                        transform: translateX(-200%);
                     }
                     to {
-                        transform: translateX(150%);
+                        transform: translateX(200%);
                     }
                 }
 
             `}</style>
         </div>
     );
-}
+
+    
