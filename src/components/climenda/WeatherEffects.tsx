@@ -9,8 +9,8 @@ interface WeatherEffectsProps {
 }
 
 const Rain = () => (
-    <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        {Array.from({ length: 100 }).map((_, i) => (
+    <div className="absolute top-0 left-0 w-full h-1/2 overflow-hidden pointer-events-none z-10">
+        {Array.from({ length: 150 }).map((_, i) => (
             <div
                 key={i}
                 className="absolute bg-gradient-to-b from-transparent to-blue-300/50 animate-fall"
@@ -18,7 +18,7 @@ const Rain = () => (
                     left: `${Math.random() * 100}%`,
                     width: `${1 + Math.random()}px`,
                     height: `${20 + Math.random() * 40}px`,
-                    animationDelay: `${Math.random()}s`,
+                    animationDelay: `${Math.random() * 2}s`,
                     animationDuration: `${0.5 + Math.random() * 0.5}s`,
                 }}
             />
@@ -26,10 +26,10 @@ const Rain = () => (
         <style jsx>{`
             @keyframes fall {
                 from {
-                    transform: translateY(-10vh) rotate(35deg);
+                    transform: translateY(-20%) rotate(15deg);
                 }
                 to {
-                    transform: translateY(105vh) rotate(35deg);
+                    transform: translateY(120%) rotate(15deg);
                 }
             }
             .animate-fall {
@@ -41,28 +41,27 @@ const Rain = () => (
     </div>
 );
 
-
 const Thunder = () => (
     <>
-        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 animate-lightning-bg" />
+        <div className="absolute top-0 left-0 w-full h-1/2 bg-black opacity-0 animate-lightning-bg pointer-events-none z-20" />
         <style jsx>{`
             @keyframes lightning-bg {
                 0%, 100% { opacity: 0; }
-                5% { opacity: 0.2; }
-                10% { opacity: 0; }
-                12% { opacity: 0.1; }
-                20% { opacity: 0; }
+                2% { opacity: 0.3; }
+                5% { opacity: 0; }
+                7% { opacity: 0.2; }
+                15% { opacity: 0; }
             }
             .animate-lightning-bg {
-                animation: lightning-bg 7s linear infinite;
-                animation-delay: 2s;
+                animation: lightning-bg 9s linear infinite;
+                animation-delay: 3s;
             }
         `}</style>
     </>
 );
 
 const Clouds = () => (
-    <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+    <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
         <div id="cloud-group-1" className="absolute top-0 w-[200%] h-full animate-cloud-drift-1">
             <div className="cloud cloud-1"></div>
             <div className="cloud cloud-2"></div>
@@ -76,52 +75,50 @@ const Clouds = () => (
         <style jsx>{`
             .cloud {
                 position: absolute;
-                background: #fff;
+                background: white;
                 border-radius: 50%;
-                opacity: 0.2;
-                filter: blur(5px);
+                opacity: 0.15;
+                filter: blur(8px);
             }
             .cloud::before, .cloud::after {
                 content: '';
                 position: absolute;
-                background: #fff;
+                background: white;
                 border-radius: 50%;
             }
-            .cloud-1 { top: 10%; left: 5%; width: 100px; height: 30px; }
-            .cloud-1::before { top: -15px; left: 10px; width: 50px; height: 50px; }
-            .cloud-1::after { top: -25px; left: 40px; width: 60px; height: 60px; }
+            .cloud-1 { top: 5%; left: 10%; width: 120px; height: 35px; }
+            .cloud-1::before { top: -18px; left: 15px; width: 60px; height: 60px; }
+            .cloud-1::after { top: -30px; left: 50px; width: 70px; height: 70px; }
             
-            .cloud-2 { top: 20%; left: 25%; width: 150px; height: 45px; }
-            .cloud-2::before { top: -20px; left: 20px; width: 70px; height: 70px; }
-            .cloud-2::after { top: -30px; left: 60px; width: 80px; height: 80px; }
+            .cloud-2 { top: 12%; left: 35%; width: 180px; height: 50px; }
+            .cloud-2::before { top: -25px; left: 25px; width: 80px; height: 80px; }
+            .cloud-2::after { top: -40px; left: 70px; width: 90px; height: 90px; }
 
-            .cloud-3 { top: 15%; left: 70%; width: 120px; height: 35px; }
-            .cloud-3::before { top: -18px; left: 15px; width: 55px; height: 55px; }
-            .cloud-3::after { top: -28px; left: 50px; width: 70px; height: 70px; }
+            .cloud-3 { top: 8%; left: 80%; width: 150px; height: 40px; }
+            .cloud-3::before { top: -20px; left: 20px; width: 65px; height: 65px; }
+            .cloud-3::after { top: -30px; left: 60px; width: 80px; height: 80px; }
 
-            .cloud-4 { top: 30%; left: 10%; width: 130px; height: 40px; opacity: 0.3; }
-            .cloud-4::before { top: -18px; left: 15px; width: 60px; height: 60px; }
-            .cloud-4::after { top: -28px; left: 55px; width: 75px; height: 75px; }
+            .cloud-4 { top: 20%; left: 5%; width: 140px; height: 45px; opacity: 0.2; }
+            .cloud-4::before { top: -22px; left: 18px; width: 68px; height: 68px; }
+            .cloud-4::after { top: -35px; left: 60px; width: 85px; height: 85px; }
 
-            .cloud-5 { top: 40%; left: 50%; width: 160px; height: 50px; opacity: 0.25; }
-            .cloud-5::before { top: -25px; left: 25px; width: 80px; height: 80px; }
-            .cloud-5::after { top: -35px; left: 70px; width: 90px; height: 90px; }
+            .cloud-5 { top: 28%; left: 55%; width: 200px; height: 60px; opacity: 0.25; }
+            .cloud-5::before { top: -30px; left: 30px; width: 90px; height: 90px; }
+            .cloud-5::after { top: -45px; left: 80px; width: 100px; height: 100px; }
             
-            .cloud-6 { top: 35%; left: 85%; width: 110px; height: 30px; opacity: 0.3; }
-            .cloud-6::before { top: -15px; left: 10px; width: 50px; height: 50px; }
-            .cloud-6::after { top: -25px; left: 40px; width: 60px; height: 60px; }
-
+            .cloud-6 { top: 22%; left: 90%; width: 130px; height: 35px; opacity: 0.22; }
+            .cloud-6::before { top: -18px; left: 15px; width: 55px; height: 55px; }
+            .cloud-6::after { top: -28px; left: 45px; width: 70px; height: 70px; }
 
             @keyframes cloud-drift {
-                from { transform: translateX(0%); }
-                to { transform: translateX(-100%); }
+                from { transform: translateX(5%); }
+                to { transform: translateX(-105%); }
             }
-            .animate-cloud-drift-1 { animation: cloud-drift 80s linear infinite; }
-            .animate-cloud-drift-2 { animation: cloud-drift 120s linear infinite; animation-direction: reverse; }
+            .animate-cloud-drift-1 { animation: cloud-drift 120s linear infinite; }
+            .animate-cloud-drift-2 { animation: cloud-drift 180s linear infinite; }
         `}</style>
     </div>
 );
-
 
 export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const [isClient, setIsClient] = useState(false);
@@ -143,19 +140,20 @@ export function WeatherEffects({ condition }: WeatherEffectsProps) {
     const isCloudy = lowerCaseCondition.includes('cloudy') || lowerCaseCondition.includes('overcast') || isRainy || isStormy;
 
     return (
-        <div key={key} className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-gradient-to-b from-blue-300 via-slate-600 to-gray-900 animate-sky-mood">
+        <div key={key} className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-blue-300/30 via-slate-600/20 to-gray-900/10 animate-sky-mood"></div>
             {isCloudy && <Clouds />}
             {isRainy && <Rain />}
             {isStormy && <Thunder />}
 
             <style jsx global>{`
                 @keyframes sky-mood {
-                    0% { filter: brightness(0.8) saturate(1); }
+                    0% { filter: brightness(0.9) saturate(1); }
                     50% { filter: brightness(1.1) saturate(1.2); }
-                    100% { filter: brightness(0.8) saturate(1); }
+                    100% { filter: brightness(0.9) saturate(1); }
                 }
                 .animate-sky-mood {
-                    animation: sky-mood 45s ease-in-out infinite;
+                    animation: sky-mood 60s ease-in-out infinite;
                 }
             `}</style>
         </div>
