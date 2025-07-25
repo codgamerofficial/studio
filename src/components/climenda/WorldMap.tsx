@@ -1,3 +1,4 @@
+
 'use client'
 
 import React from 'react';
@@ -17,9 +18,30 @@ interface WorldMapProps {
   location: LocationInfo;
 }
 
+// Simple hash function to get a number from a string
+const stringToHash = (str: string) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = (hash << 5) - hash + char;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+}
+
+// Function to generate a color from a string
+const generateColor = (name: string) => {
+    const hash = stringToHash(name);
+    const hue = Math.abs(hash) % 360;
+    // Using fixed saturation and lightness for consistency in the theme
+    return `hsl(${hue}, 90%, 60%)`;
+};
+
+
 export function WorldMap({ location }: WorldMapProps) {
   const coordinates: [number, number] = [location.lon, location.lat];
   const locationName = `${location.name}, ${location.region}`;
+  const countryColor = generateColor(location.country);
   
   return (
     <Card className="bg-card/80 backdrop-blur-sm">
@@ -47,12 +69,12 @@ export function WorldMap({ location }: WorldMapProps) {
                     <Geography
                       key={geo.rsmKey}
                       geography={geo}
-                      fill={isSelectedCountry ? "hsl(var(--accent))" : "hsl(var(--muted))"}
+                      fill={isSelectedCountry ? countryColor : "hsl(var(--muted))"}
                       stroke="hsl(var(--background))"
                       strokeWidth={0.2}
                       style={{
                         default: { outline: 'none' },
-                        hover: { fill: isSelectedCountry ? "hsl(var(--accent))" : "hsl(var(--primary) / 0.5)", outline: 'none' },
+                        hover: { fill: isSelectedCountry ? countryColor : "hsl(var(--primary) / 0.5)", outline: 'none', filter: isSelectedCountry ? `brightness(1.2)` : '' },
                         pressed: { fill: "hsl(var(--primary))", outline: 'none' },
                       }}
                     />
